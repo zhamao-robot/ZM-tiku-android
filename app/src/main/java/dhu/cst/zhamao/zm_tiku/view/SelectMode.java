@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -58,6 +59,14 @@ public class SelectMode extends AppCompatActivity {
 
         Button selectMode = findViewById(R.id.selectBankButton);
         selectMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishAfterTransition();
+            }
+        });
+
+        ImageView backImage = findViewById(R.id.backImage);
+        backImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finishAfterTransition();
