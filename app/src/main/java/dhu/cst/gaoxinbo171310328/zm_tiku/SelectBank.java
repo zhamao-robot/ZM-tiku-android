@@ -14,7 +14,6 @@ public class SelectBank extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_bank);
-        getSupportActionBar().setTitle("选择题库");
 
         MaterialCardView materialCardView = findViewById(R.id.materialCardView1);
         materialCardView.setOnClickListener(new View.OnClickListener() {
