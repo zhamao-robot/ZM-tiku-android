@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dhu.cst.gaoxinbo171310328.zm_tiku">
+    package="dhu.cst.zhamao.zm_tiku">
 
     <application
         android:allowBackup="true"
@@ -9,9 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DoExam"></activity>
-        <activity android:name=".SelectMode" />
-        <activity android:name=".SelectBank">
+        <activity android:name="dhu.cst.zhamao.zm_tiku.DoExam"></activity>
+        <activity android:name="dhu.cst.zhamao.zm_tiku.SelectMode" />
+        <activity android:name="dhu.cst.zhamao.zm_tiku.SelectBank">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

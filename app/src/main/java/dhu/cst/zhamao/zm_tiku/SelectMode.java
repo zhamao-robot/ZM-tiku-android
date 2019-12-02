@@ -1,8 +1,8 @@
-package dhu.cst.gaoxinbo171310328.zm_tiku;
+package dhu.cst.zhamao.zm_tiku;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -31,8 +31,7 @@ public class SelectMode extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SelectMode.this,DoExam.class);
-                startActivity(intent);
-                finish();
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectMode.this).toBundle());
             }
         });
 
@@ -40,9 +39,7 @@ public class SelectMode extends AppCompatActivity {
         selectMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectMode.this,SelectBank.class);
-                startActivity(intent);
-                finish();
+                finishAfterTransition();
             }
         });
     }

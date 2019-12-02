@@ -1,7 +1,8 @@
-package dhu.cst.gaoxinbo171310328.zm_tiku;
+package dhu.cst.zhamao.zm_tiku;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -20,8 +21,7 @@ public class SelectBank extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SelectBank.this,SelectMode.class);
-                startActivity(intent);
-                finish();
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
             }
         });
     }

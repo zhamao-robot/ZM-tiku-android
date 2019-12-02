@@ -1,4 +1,4 @@
-package dhu.cst.gaoxinbo171310328.zm_tiku;
+package dhu.cst.zhamao.zm_tiku;
 
 import org.junit.Test;
 
