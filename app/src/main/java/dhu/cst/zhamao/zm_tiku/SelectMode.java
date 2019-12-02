@@ -9,6 +9,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SelectMode extends AppCompatActivity {
 
@@ -18,13 +23,27 @@ public class SelectMode extends AppCompatActivity {
         setContentView(R.layout.select_mode);
 
         String[] COUNTRIES = new String[] {"循序做题", "练习错题", "只做单选", "只做多选", "随机做题"};
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(
-                        this,
-                        R.layout.dropdown_menu_popup_item,
-                        COUNTRIES);
-        AutoCompleteTextView editTextFilledExposedDropdown = findViewById(R.id.filled_exposed_dropdown);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.dropdown_menu_popup_item, COUNTRIES);
+        AutoCompleteTextView editTextFilledExposedDropdown = findViewById(R.id.selectModeDropdown);
         editTextFilledExposedDropdown.setAdapter(adapter);
+
+        SwitchMaterial shuffleSwitch = findViewById(R.id.shuffleSwitch);
+        shuffleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) Snackbar.make(findViewById(R.id.ConstraintLayout),"打乱顺序已打开",Snackbar.LENGTH_SHORT).show();
+                else Snackbar.make(findViewById(R.id.ConstraintLayout),"打乱顺序已关闭",Snackbar.LENGTH_SHORT).show();
+            }
+        });
+
+        SwitchMaterial autoNextSwitch = findViewById(R.id.autoNextSwitch);
+        autoNextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) Snackbar.make(findViewById(R.id.ConstraintLayout),"自动跳过已打开",Snackbar.LENGTH_SHORT).show();
+                else Snackbar.make(findViewById(R.id.ConstraintLayout),"自动跳过已关闭",Snackbar.LENGTH_SHORT).show();
+            }
+        });
 
         Button doExam = findViewById(R.id.doExamButton);
         doExam.setOnClickListener(new View.OnClickListener() {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ConstraintLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -46,6 +47,7 @@
         android:minHeight="130dp"
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBar">
@@ -57,7 +59,7 @@
             android:weightSum="2">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/progressText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -76,6 +78,7 @@
                 android:weightSum="2">
 
                 <TextView
+                    android:id="@+id/currentModeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -86,7 +89,7 @@
                     android:textSize="20sp" />
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/arrowImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -100,7 +103,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchMaterial"
+        android:id="@+id/shuffleSwitch"
         style="@style/Widget.MaterialComponents.CompoundButton.Switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -117,7 +120,7 @@
         app:useMaterialThemeColors="false" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchMaterial2"
+        android:id="@+id/autoNextSwitch"
         style="@style/Widget.MaterialComponents.CompoundButton.Switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -129,7 +132,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchMaterial"
+        app:layout_constraintTop_toBottomOf="@+id/shuffleSwitch"
         app:useMaterialThemeColors="false" />
 
     <LinearLayout
@@ -143,7 +146,7 @@
         android:weightSum="10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchMaterial2">
+        app:layout_constraintTop_toBottomOf="@+id/autoNextSwitch">
 
         <TextView
             android:layout_width="match_parent"
@@ -158,12 +161,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:hint="请选择">
+            android:hint="选择模式">
 
             <AutoCompleteTextView
-                android:id="@+id/filled_exposed_dropdown"
+                android:id="@+id/selectModeDropdown"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
