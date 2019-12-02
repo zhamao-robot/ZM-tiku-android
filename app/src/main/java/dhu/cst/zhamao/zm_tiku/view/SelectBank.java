@@ -1,4 +1,4 @@
-package dhu.cst.zhamao.zm_tiku;
+package dhu.cst.zhamao.zm_tiku.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.google.android.material.card.MaterialCardView;
+
+import dhu.cst.zhamao.zm_tiku.R;
 
 public class SelectBank extends AppCompatActivity {
 
@@ -20,7 +22,7 @@ public class SelectBank extends AppCompatActivity {
         materialCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectBank.this,SelectMode.class);
+                Intent intent = new Intent(SelectBank.this, SelectMode.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
             }
         });

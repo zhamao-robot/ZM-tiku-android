@@ -1,4 +1,4 @@
-package dhu.cst.zhamao.zm_tiku;
+package dhu.cst.zhamao.zm_tiku.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+
+import dhu.cst.zhamao.zm_tiku.R;
 
 public class SelectMode extends AppCompatActivity {
 
@@ -30,7 +32,7 @@ public class SelectMode extends AppCompatActivity {
         doExam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectMode.this,DoExam.class);
+                Intent intent = new Intent(SelectMode.this, DoExam.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectMode.this).toBundle());
             }
         });
