@@ -7,10 +7,11 @@
     tools:context=".DoExam">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/questionView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题"
+        android:textColor="@color/primaryTextColor"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
@@ -18,14 +19,174 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
+    <LinearLayout
+        android:id="@+id/answerLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/questionView">
+
+        <TextView
+            android:id="@+id/answerLabel1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/circle"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="@color/primaryTextColor"
+            android:text="A"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/answerText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/primaryTextColor"
+            android:text="选项A选项A选项A选项A选项A选项A" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/answerLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answerLayout1">
+
+        <TextView
+            android:id="@+id/answerLabel2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/circle"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/primaryTextColor"
+            android:text="B"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/answerText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/primaryTextColor"
+            android:text="选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/answerLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answerLayout2">
+
+        <TextView
+            android:id="@+id/answerLabel3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/circle"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/primaryTextColor"
+            android:text="C"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/answerText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/primaryTextColor"
+            android:text="选项C选项C选项C选项C选项C选项C选项C" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/answerLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answerLayout3">
+
+        <TextView
+            android:id="@+id/answerLabel4"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/circle"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/primaryTextColor"
+            android:text="D"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/answerText4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/primaryTextColor"
+            android:text="选项D选项D选项D选项D选项D选项D选项D选项D" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/answerLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/answerLayout4">
+
+        <TextView
+            android:id="@+id/answerLabel5"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/circle"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/primaryTextColor"
+            android:text="E"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/answerText5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/primaryTextColor"
+            android:text="选项E选项E选项E选项E选项E选项E选项E选项E" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

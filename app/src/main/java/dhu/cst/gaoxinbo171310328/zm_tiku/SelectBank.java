@@ -22,6 +22,7 @@ public class SelectBank extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SelectBank.this,SelectMode.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
