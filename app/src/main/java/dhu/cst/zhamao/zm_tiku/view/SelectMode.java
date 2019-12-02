@@ -1,4 +1,4 @@
-package dhu.cst.zhamao.zm_tiku;
+package dhu.cst.zhamao.zm_tiku.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +14,8 @@ import android.widget.Switch;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import dhu.cst.zhamao.zm_tiku.R;
 
 public class SelectMode extends AppCompatActivity {
 
@@ -49,7 +51,7 @@ public class SelectMode extends AppCompatActivity {
         doExam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectMode.this,DoExam.class);
+                Intent intent = new Intent(SelectMode.this, DoExam.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectMode.this).toBundle());
             }
         });

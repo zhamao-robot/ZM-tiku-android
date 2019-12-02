@@ -9,9 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="dhu.cst.zhamao.zm_tiku.DoExam"></activity>
-        <activity android:name="dhu.cst.zhamao.zm_tiku.SelectMode" />
-        <activity android:name="dhu.cst.zhamao.zm_tiku.SelectBank">
+        <activity android:name="dhu.cst.zhamao.zm_tiku.view.DoExam"></activity>
+        <activity android:name="dhu.cst.zhamao.zm_tiku.view.SelectMode" />
+        <activity android:name="dhu.cst.zhamao.zm_tiku.view.SelectBank">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
