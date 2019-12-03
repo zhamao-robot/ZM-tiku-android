@@ -1,6 +1,7 @@
 package dhu.cst.zhamao.zm_tiku.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,5 +140,67 @@ public class QB {
             //TODO: 多选随机，单选随机，高频，跳转
         }
         return ls;
+    }
+
+    public void setDoingList(String user_id, String qb_name, List<Integer> list) {
+        //TODO: 更新数据库的doing列表
+    }
+
+    public void setWrongList(String user_id, String qb_name, List<Integer> list) {
+        //TODO: 更新数据库的wrong列表
+    }
+
+    public void setDoing(String user_id, String qb_name, boolean status) {
+        //TODO: 更新数据库的doing选项
+    }
+
+    public String getQuestionTypeCH(TikuSection q) {
+        List<String> ls = Arrays.asList("单选题", "多选题", "填空题");
+        try {
+            return ls.get(q.answer_type);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param qb_name 题库名称
+     * @param doing_list 正在做的列表
+     * @param current_ans 当前的答案
+     * @param shuffle 是否打乱选项顺序
+     * @return TikuSection|null
+     */
+    public TikuSection getQuestion(String qb_name, List<Integer> doing_list, int current_ans, boolean shuffle) {
+        try {
+            Map<String, TikuSection> qb = getTikuData(qb_name);
+            int t = doing_list.get(current_ans);
+            TikuSection section = qb.get(Integer.toString(t));
+            if (shuffle) { //打乱选项
+                if (section != null && section.answer_type != 2) {
+                    List<String> ls = new ArrayList<>();
+                    for (Map.Entry<String, String> entry : section.answer.entrySet()) {
+                        ls.add(entry.getKey());
+                    }
+                    // List<String> new_ans = new ArrayList<>();
+                    Map<String, String> new_ans = new LinkedHashMap<>();
+                    List<String> origin = new ArrayList<>(ls);
+                    Collections.shuffle(ls);
+                    int cnt = 0;
+                    for (int i = 0; i < ls.size(); ++i) {
+                        new_ans.put(origin.get(cnt++), section.answer.get(ls.get(i)));
+                    }
+                    section.answer = new_ans;
+                    section.shuffle = ls;
+                }
+            }
+            return section;
+        } catch (NullPointerException e) {
+            Log.e("QB", "getQuestion获取Map错误！");
+            return null;
+        }
+    }
+
+    public void setCurrentAns(String user_id, String qb_name, int num) {
+        //TODO: 设置当前的ans
     }
 }
