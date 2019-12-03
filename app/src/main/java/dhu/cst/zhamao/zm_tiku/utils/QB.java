@@ -21,7 +21,6 @@ public class QB {
 
     public QB(Context context) {
         this.context = context;
-
     }
 
     /**
@@ -202,5 +201,29 @@ public class QB {
 
     public void setCurrentAns(String user_id, String qb_name, int num) {
         //TODO: 设置当前的ans
+    }
+
+    public boolean isRightId(String id, String qb_name) {
+        return ZMUtil.isNumeric(id) && getTikuData(qb_name).containsKey(id);
+    }
+
+    public void setQBMode(String user_id, String qb_name, String mode) {
+        List<String> ls = Arrays.asList("跳转", "单选", "多选", "错题", "随机", "高频", "单选随机", "多选随机");
+        int mode_id = ls.indexOf(mode);
+        if(mode_id == -1) mode_id = 0;
+        //TODO: 数据库设置当前QB的模式
+    }
+
+    public void setAnswerCount(String user_id, String qb_name, int count) {
+        //TODO: 数据库设置answer_count
+    }
+
+    public void setRightCount(String user_id, String qb_name, int count) {
+        //TODO: 数据库设置right_count
+    }
+
+    public JudgeResult judgeQuestion(String user_id, QBSection qb_data, TikuSection question, String answer) {
+        //TODO: 判题逻辑
+        return null;
     }
 }

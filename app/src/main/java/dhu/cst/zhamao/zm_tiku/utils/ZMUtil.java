@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 public class ZMUtil {
 
@@ -24,9 +25,14 @@ public class ZMUtil {
             output.close();
             input.close();
             return output.toString();
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.e("ZMUtil", "读取文件错误！");
             return null;
         }
+    }
+
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
     }
 }
