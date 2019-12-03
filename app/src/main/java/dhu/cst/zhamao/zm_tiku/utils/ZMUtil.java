@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ZMUtil {
@@ -34,5 +35,14 @@ public class ZMUtil {
     public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
+    }
+
+    public static String implode(String del, List<String> list) {
+        StringBuilder p = new StringBuilder();
+        for(int i = 0; i < list.size(); ++i){
+            if(i != list.size() - 1) p.append(list.get(i)).append(del);
+            else p.append(list.get(i));
+        }
+        return p.toString();
     }
 }

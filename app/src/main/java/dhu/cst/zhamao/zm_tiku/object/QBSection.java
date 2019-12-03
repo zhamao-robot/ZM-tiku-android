@@ -1,4 +1,4 @@
-package dhu.cst.zhamao.zm_tiku.utils;
+package dhu.cst.zhamao.zm_tiku.object;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,15 +42,18 @@ public class QBSection {
 
     public List<Integer> getWrong() {
         Gson gson = new Gson();
-        return gson.fromJson(wrong, new TypeToken<List<Integer>>() {}.getType());
+        return gson.fromJson(wrong, new TypeToken<List<Integer>>() {
+        }.getType());
     }
 
     public void setWrong(String wrong) {
         this.wrong = wrong;
     }
 
-    public String getDoing_list() {
-        return doing_list;
+    public List<Integer> getDoingList() {
+        Gson gson = new Gson();
+        return gson.fromJson(doing_list, new TypeToken<List<Integer>>() {
+        }.getType());
     }
 
     public void setDoing_list(String doing_list) {
