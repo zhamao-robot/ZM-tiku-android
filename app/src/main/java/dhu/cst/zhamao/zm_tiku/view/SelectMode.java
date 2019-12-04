@@ -3,15 +3,20 @@ package dhu.cst.zhamao.zm_tiku.view;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -19,15 +24,11 @@ import dhu.cst.zhamao.zm_tiku.R;
 
 public class SelectMode extends AppCompatActivity {
 
+    private int mode_selected_tmp = 0,mode_selected = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_mode);
-
-        String[] COUNTRIES = new String[] {"循序做题", "练习错题", "只做单选", "只做多选", "随机做题"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.dropdown_menu_popup_item, COUNTRIES);
-        AutoCompleteTextView editTextFilledExposedDropdown = findViewById(R.id.selectModeDropdown);
-        editTextFilledExposedDropdown.setAdapter(adapter);
 
         SwitchMaterial shuffleSwitch = findViewById(R.id.shuffleSwitch);
         shuffleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -69,6 +70,34 @@ public class SelectMode extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finishAfterTransition();
+            }
+        });
+
+        LinearLayout switchModeLayout = findViewById(R.id.switchModeLayout);
+        switchModeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] mode_list = {"顺序做题", "错题练习", "只做单选", "只做多选", "随机做题"};
+
+                new MaterialAlertDialogBuilder(SelectMode.this)
+                        .setTitle("选择做题模式")
+                        .setSingleChoiceItems(mode_list, mode_selected, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mode_selected_tmp = which;
+                            }
+                        })
+                        .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mode_selected = mode_selected_tmp;
+                                TextView switchModeNameText = findViewById(R.id.switchModeNameText);
+                                switchModeNameText.setText(mode_list[mode_selected]);
+
+                            }
+                        })
+                        .setNegativeButton("取消",null)
+                        .show();
             }
         });
     }
