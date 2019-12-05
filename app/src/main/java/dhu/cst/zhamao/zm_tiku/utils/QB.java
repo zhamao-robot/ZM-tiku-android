@@ -1,7 +1,6 @@
 package dhu.cst.zhamao.zm_tiku.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,10 +166,10 @@ public class QB {
     }
 
     /**
-     * @param qb_name 题库名称
-     * @param doing_list 正在做的列表
+     * @param qb_name     题库名称
+     * @param doing_list  正在做的列表
      * @param current_ans 当前的答案
-     * @param shuffle 是否打乱选项顺序
+     * @param shuffle     是否打乱选项顺序
      * @return TikuSection|null
      */
     public TikuSection getQuestion(String qb_name, List<Integer> doing_list, int current_ans, boolean shuffle) {
@@ -198,7 +197,7 @@ public class QB {
             }
             return section;
         } catch (NullPointerException e) {
-            Log.e("QB", "getQuestion获取Map错误！");
+            //Log.e("QB", "getQuestion获取Map错误！");
             return null;
         }
     }
@@ -214,7 +213,7 @@ public class QB {
     public void setQBMode(String user_id, String qb_name, String mode) {
         List<String> ls = Arrays.asList("跳转", "单选", "多选", "错题", "随机", "高频", "单选随机", "多选随机");
         int mode_id = ls.indexOf(mode);
-        if(mode_id == -1) mode_id = 0;
+        if (mode_id == -1) mode_id = 0;
         //TODO: 数据库设置当前QB的模式
     }
 
@@ -226,7 +225,8 @@ public class QB {
         //TODO: 数据库设置right_count
     }
 
-    private void pass(){}
+    private void pass() {
+    }
 
     private List<String> getShuffleList(String user_id) {
         //TODO: 将user类里的shuffle数据存到别的地方
@@ -235,18 +235,18 @@ public class QB {
 
     public JudgeResult judgeQuestion(String user_id, QBSection qb_data, TikuSection question, String answer) {
         //ZMBuf::set("normal_count", ZMBuf::get("normal_count") + 1);
-        if(qb_data.qb_mode != 3) pass();
+        if (qb_data.qb_mode != 3) pass();
         String da_an = question.key;
         List<String> shuffle_list = getShuffleList(user_id);
-        if(shuffle_list.size() != 0) {
+        if (shuffle_list.size() != 0) {
             String s_tmp = getTrueAnswer(ZMUtil.implode("", shuffle_list), 0);
             String[] s_tmp2 = s_tmp.split("");
             Map<String, String> oj = new LinkedHashMap<>();
-            for(String v : s_tmp2) {
+            for (String v : s_tmp2) {
                 oj.put(v, shuffle_list.remove(0));
             }
             StringBuilder a = new StringBuilder();
-            for(String v : answer.split("")) {
+            for (String v : answer.split("")) {
                 a.append(oj.get(v));
             }
             answer = getTrueAnswer(a.toString(), 0);//用户的答案（转换为原始答案）
@@ -254,23 +254,24 @@ public class QB {
         JudgeResult result = new JudgeResult();
         result.status = answer.equals(da_an);//返回题目对错情况
         result.id = qb_data.getDoingList().get(qb_data.current_ans);
-        if(shuffle_list.size() != 0) {
+        if (shuffle_list.size() != 0) {
             String origin_key = question.key;
             String s_tmp = getTrueAnswer(ZMUtil.implode("", shuffle_list), 0);
             String[] s_tmp2 = s_tmp.split("");
             String[] origin_key2 = origin_key.split("");
             StringBuilder question_key = new StringBuilder();
-            for(String v : origin_key2) {
+            for (String v : origin_key2) {
                 int ss = shuffle_list.indexOf(v);
                 question_key.append(s_tmp2[ss]);
             }
             question.key = getTrueAnswer(question_key.toString(), 0);
         }
         result.right_answer = question.key;
-        if(qb_data.qb_mode != 3) {
+        if (qb_data.qb_mode != 3) {
             setAnswerCount(user_id, qb_data.qb_name, qb_data.answer_count + 1);
-            if(answer.equals(da_an)) setRightCount(user_id, qb_data.qb_name, qb_data.right_count + 1);
-            else if(qb_data.getWrong().contains(qb_data.getDoingList().get(qb_data.current_ans))){
+            if (answer.equals(da_an))
+                setRightCount(user_id, qb_data.qb_name, qb_data.right_count + 1);
+            else if (qb_data.getWrong().contains(qb_data.getDoingList().get(qb_data.current_ans))) {
                 qb_data.getWrong().add(qb_data.getDoingList().get(qb_data.current_ans));
                 setWrongList(user_id, qb_data.qb_name, qb_data.getWrong());
             }
@@ -279,7 +280,7 @@ public class QB {
     }
 
     public Map<String, String> getInfo(String user_id, String qb_name) {
-        if(getTikuName(qb_name) == null) return null;
+        if (getTikuName(qb_name) == null) return null;
         Map<String, String> res = new LinkedHashMap<>();
         //TODO: 数据库 获取 qb 表格的信息
         return res;

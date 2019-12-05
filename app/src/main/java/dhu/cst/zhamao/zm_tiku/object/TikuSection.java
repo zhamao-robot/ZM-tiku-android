@@ -9,5 +9,4 @@ public class TikuSection {
     public String key;
     public int answer_type;
     public List<String> shuffle;
-
 }

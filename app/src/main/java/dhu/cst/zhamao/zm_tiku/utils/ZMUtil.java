@@ -39,8 +39,8 @@ public class ZMUtil {
 
     public static String implode(String del, List<String> list) {
         StringBuilder p = new StringBuilder();
-        for(int i = 0; i < list.size(); ++i){
-            if(i != list.size() - 1) p.append(list.get(i)).append(del);
+        for (int i = 0; i < list.size(); ++i) {
+            if (i != list.size() - 1) p.append(list.get(i)).append(del);
             else p.append(list.get(i));
         }
         return p.toString();

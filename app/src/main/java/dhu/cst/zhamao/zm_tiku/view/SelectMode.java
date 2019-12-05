@@ -20,6 +20,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import dhu.cst.zhamao.zm_tiku.R;
 
 public class SelectMode extends AppCompatActivity {
@@ -77,26 +81,19 @@ public class SelectMode extends AppCompatActivity {
         switchModeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String[] mode_list = {"顺序做题", "错题练习", "只做单选", "只做多选", "随机做题"};
-
-                new MaterialAlertDialogBuilder(SelectMode.this)
-                        .setTitle("选择做题模式")
-                        .setSingleChoiceItems(mode_list, mode_selected, new DialogInterface.OnClickListener() {
+                final List<String> mode_list = Arrays.asList("顺序做题", "错题练习", "只做单选", "只做多选", "随机做题");
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(SelectMode.this, android.R.layout.simple_list_item_1, mode_list);
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(SelectMode.this);
+                builder.setTitle("选择做题模式")
+                        .setAdapter(adapter, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 mode_selected_tmp = which;
-                            }
-                        })
-                        .setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
                                 mode_selected = mode_selected_tmp;
                                 TextView switchModeNameText = findViewById(R.id.switchModeNameText);
-                                switchModeNameText.setText(mode_list[mode_selected]);
-
+                                switchModeNameText.setText(mode_list.get(mode_selected));
                             }
                         })
-                        .setNegativeButton("取消",null)
                         .show();
             }
         });
