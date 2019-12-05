@@ -11,9 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="dhu.cst.zhamao.zm_tiku.view.DoExam" />
-        <activity android:name="dhu.cst.zhamao.zm_tiku.view.SelectMode" />
-        <activity android:name="dhu.cst.zhamao.zm_tiku.view.SelectBank">
+        <activity android:name="dhu.cst.zhamao.zm_tiku.view.DoExam" android:screenOrientation="portrait"/>
+        <activity android:name="dhu.cst.zhamao.zm_tiku.view.SelectMode" android:screenOrientation="portrait"/>
+        <activity android:name="dhu.cst.zhamao.zm_tiku.view.SelectBank" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,12 +2,14 @@ package dhu.cst.zhamao.zm_tiku.utils;
 
 import android.content.Context;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -17,13 +19,24 @@ import com.google.gson.JsonParser;
 import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
 import dhu.cst.zhamao.zm_tiku.object.QBSection;
 import dhu.cst.zhamao.zm_tiku.object.TikuSection;
+import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 
 public class QB {
 
     private final Context context;
+    private DBHelper db;
 
     public QB(Context context) {
         this.context = context;
+        this.db = new DBHelper(context);
+    }
+
+    public DBHelper getDB() {
+        return this.db;
+    }
+
+    public String getUserId() {
+        return "7cf10d37-ee8d-437b-b2a2-7b6a4c97ab5a";
     }
 
     /**
@@ -92,8 +105,24 @@ public class QB {
     }
 
     public QBSection getQBData(String user_id, String qb_name) {
-        //TODO: 从数据库中读取用户做题进度
-        return new QBSection();
+        List<QBSection> r = db.queryQB("SELECT * FROM qb WHERE user_id = ? AND qb_name = ?", new String[]{user_id, qb_name});
+        if (!r.isEmpty())
+            return r.get(0);
+        else return null;
+    }
+
+    public void insertQBData(String user_id, String qb_name) {
+        db.queryQB("INSERT INTO qb VALUES(?,?,?,?,?,?,?,?,?)", new String[]{
+                user_id,
+                qb_name,
+                "0",
+                "[]",
+                "[]",
+                "0",
+                "0",
+                "0",
+                "0"
+        });
     }
 
     public List<Integer> generateDoingList(String qb_name, String rules) {
@@ -145,15 +174,15 @@ public class QB {
     }
 
     public void setDoingList(String user_id, String qb_name, List<Integer> list) {
-        //TODO: 更新数据库的doing列表
+        db.queryQB("UPDATE qb SET doing_list = ? WHERE user_id = ? AND qb_name = ?", new String[]{ZMUtil.jsonEncode(list), user_id, qb_name});
     }
 
     public void setWrongList(String user_id, String qb_name, List<Integer> list) {
-        //TODO: 更新数据库的wrong列表
+        db.queryQB("UPDATE qb SET wrong = ? WHERE user_id = ? AND qb_name = ?", new String[]{ZMUtil.jsonEncode(list), user_id, qb_name});
     }
 
     public void setDoing(String user_id, String qb_name, boolean status) {
-        //TODO: 更新数据库的doing选项
+        db.queryQB("UPDATE qb SET doing = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(status ? 1 : 0), user_id, qb_name});
     }
 
     public String getQuestionTypeCH(TikuSection q) {
@@ -203,7 +232,7 @@ public class QB {
     }
 
     public void setCurrentAns(String user_id, String qb_name, int num) {
-        //TODO: 设置当前的ans
+        db.queryQB("UPDATE qb SET current_ans = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(num), user_id, qb_name});
     }
 
     public boolean isRightId(String id, String qb_name) {
@@ -214,26 +243,29 @@ public class QB {
         List<String> ls = Arrays.asList("跳转", "单选", "多选", "错题", "随机", "高频", "单选随机", "多选随机");
         int mode_id = ls.indexOf(mode);
         if (mode_id == -1) mode_id = 0;
-        //TODO: 数据库设置当前QB的模式
+        db.queryQB("UPDATE qb SET qb_mode = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(mode_id), user_id, qb_name});
     }
 
     public void setAnswerCount(String user_id, String qb_name, int count) {
-        //TODO: 数据库设置answer_count
+        db.queryQB("UPDATE qb SET answer_count = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(count), user_id, qb_name});
     }
 
     public void setRightCount(String user_id, String qb_name, int count) {
-        //TODO: 数据库设置right_count
+        db.queryQB("UPDATE qb SET answer_count = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(count), user_id, qb_name});
     }
 
     private void pass() {
     }
 
     private List<String> getShuffleList(String user_id) {
-        //TODO: 将user类里的shuffle数据存到别的地方
+        Map<String, String> user = getDB().getUserData(user_id);
+        if (user.isEmpty()) return new ArrayList<>();
+        if (user.containsKey("qb_shuffle"))
+            return Arrays.asList(Objects.requireNonNull(user.get("qb_shuffle")).split(""));
         return new ArrayList<>();
     }
 
-    public JudgeResult judgeQuestion(String user_id, QBSection qb_data, TikuSection question, String answer) {
+    private JudgeResult judgeQuestion(String user_id, QBSection qb_data, TikuSection question, String answer) {
         //ZMBuf::set("normal_count", ZMBuf::get("normal_count") + 1);
         if (qb_data.qb_mode != 3) pass();
         String da_an = question.key;
@@ -279,10 +311,31 @@ public class QB {
         return result;
     }
 
-    public Map<String, String> getInfo(String user_id, String qb_name) {
+    public UserInfo getInfo(String user_id, String qb_name) {
         if (getTikuName(qb_name) == null) return null;
-        Map<String, String> res = new LinkedHashMap<>();
-        //TODO: 数据库 获取 qb 表格的信息
+        UserInfo res = new UserInfo();
+        List<QBSection> r = db.queryQB("SELECT * FROM qb WHERE user_id = ? AND qb_name = ?", new String[]{user_id, qb_name});
+
+        if (r.isEmpty()) {
+            res.status = 0;
+            res.mode = 0;
+            res.shuffle = false;
+            res.count = getTikuData(qb_name).size();
+            res.progress = 0;
+        } else {
+            QBSection rs = r.get(0);
+            Map<String, String> user = db.getUserData(user_id);
+            res.status = 1;
+            res.mode = rs.qb_mode;
+            if (user.isEmpty()) res.shuffle = false;
+            String shuffle = user.get("qb_shuffle");
+            if (shuffle != null && !Objects.equals(shuffle, "")) res.shuffle = true;
+            res.count = rs.doing_list.size();
+            res.progress = rs.current_ans;
+        }
         return res;
     }
+
+    ////////////// non internal API part
+
 }

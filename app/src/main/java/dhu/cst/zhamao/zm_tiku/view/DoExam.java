@@ -14,14 +14,10 @@ import dhu.cst.zhamao.zm_tiku.utils.QB;
 
 public class DoExam extends AppCompatActivity {
 
-    private QB qb;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.do_exam);
-        this.qb = new QB(this);
-
         ImageView backImage = findViewById(R.id.backImage);
         backImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +37,7 @@ public class DoExam extends AppCompatActivity {
         LinearLayout linearLayout5 = findViewById(R.id.answerLayout5);
         linearLayout5.setOnClickListener(new onClickAnswer());
 
+
     }
 
     public class onClickAnswer implements View.OnClickListener{
@@ -56,9 +53,5 @@ public class DoExam extends AppCompatActivity {
                 cur.setBackground(getDrawable(R.drawable.circle));
             }
         }
-    }
-
-    public QB getQB() {
-        return qb;
     }
 }

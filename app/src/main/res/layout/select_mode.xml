@@ -26,6 +26,7 @@
             app:srcCompat="@drawable/ic_arrow_back_black_24dp"/>
 
         <TextView
+            android:id="@+id/select_mode_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="32dp"

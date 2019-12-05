@@ -4,15 +4,17 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class ZMUtil {
+class ZMUtil {
 
-    public static String loadResource(Context context, String file_name) {
+    static String loadResource(Context context, String file_name) {
         if (null == context || null == file_name) return null;
         try {
             AssetManager am = context.getAssets();
@@ -32,17 +34,22 @@ public class ZMUtil {
         }
     }
 
-    public static boolean isNumeric(String str) {
+    static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
     }
 
-    public static String implode(String del, List<String> list) {
+    static String implode(String del, List<String> list) {
         StringBuilder p = new StringBuilder();
         for (int i = 0; i < list.size(); ++i) {
             if (i != list.size() - 1) p.append(list.get(i)).append(del);
             else p.append(list.get(i));
         }
         return p.toString();
+    }
+
+    static String jsonEncode(List list) {
+        Gson gson = new Gson();
+        return gson.toJson(list);
     }
 }
