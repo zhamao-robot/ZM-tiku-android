@@ -54,9 +54,11 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         switch (v.getId()) {
             case R.id.doExamButton:
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
-                intent.putExtra("qb_name", qb_name);
+                intent.putExtra("qb_name", qb_name); //题库名称
                 intent.putExtra("shuffle", shuffleSwitch.isActivated());
                 intent.putExtra("auto_skip", autoNextSwitch.isActivated());
+                intent.putExtra("qb_mode", mode_selected);
+
                 if (android.os.Build.VERSION.SDK_INT < 26) {
                     startActivity(intent);
                 } else {

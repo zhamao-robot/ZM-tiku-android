@@ -21,22 +21,20 @@ import dhu.cst.zhamao.zm_tiku.R;
 
 public class SelectBank extends AppCompatActivity implements View.OnClickListener {
 
+    MaterialCardView materialCardView1, materialCardView2, materialCardView3, materialCardView4;
+
+    boolean isUpdateActivated = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_bank);
-
         final FloatingActionButton updateButton = findViewById(R.id.upateButton);
         updateButton.setOnClickListener(new OnClickUpdateListener());
-        MaterialCardView materialCardView1 = findViewById(R.id.materialCardView1);
-        materialCardView1.setOnClickListener(this);
-        MaterialCardView materialCardView2 = findViewById(R.id.materialCardView2);
-        materialCardView2.setOnClickListener(this);
-        MaterialCardView materialCardView3 = findViewById(R.id.materialCardView3);
-        materialCardView3.setOnClickListener(this);
-        MaterialCardView materialCardView4 = findViewById(R.id.materialCardView4);
-        materialCardView4.setOnClickListener(this);
-
+        (materialCardView1 = findViewById(R.id.materialCardView1)).setOnClickListener(this);
+        (materialCardView2 = findViewById(R.id.materialCardView2)).setOnClickListener(this);
+        (materialCardView3 = findViewById(R.id.materialCardView3)).setOnClickListener(this);
+        (materialCardView4 = findViewById(R.id.materialCardView4)).setOnClickListener(this);
     }
 
     public class OnClickUpdateListener implements View.OnClickListener {
@@ -44,6 +42,12 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
         public void onClick(final View v) {
             Animation circle_anim = AnimationUtils.loadAnimation(SelectBank.this, R.anim.rotate);
             LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
+            if(isUpdateActivated) {
+                Snackbar.make(findViewById(R.id.ConstraintLayout), "已经在更新了！", Snackbar.LENGTH_SHORT).show();
+                return;
+            } else {
+                isUpdateActivated = true;
+            }
             circle_anim.setInterpolator(interpolator);
             v.startAnimation(circle_anim);  //开始动画
             Timer updateResourceTimer = new Timer();
@@ -54,7 +58,8 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
                         @Override
                         public void run() {
                             v.clearAnimation();
-                            Snackbar.make(findViewById(R.id.ConstraintLayout), "成功更新题库", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(findViewById(R.id.ConstraintLayout), "成功更新题库！", Snackbar.LENGTH_SHORT).show();
+                            isUpdateActivated = false;
                         }
                     });
                 }
