@@ -5,33 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import dhu.cst.zhamao.zm_tiku.R;
-import dhu.cst.zhamao.zm_tiku.object.QBSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 
-public class SelectMode extends AppCompatActivity {
+public class SelectMode extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private int mode_selected_tmp = 0, mode_selected = 0;
 
@@ -40,6 +29,7 @@ public class SelectMode extends AppCompatActivity {
     private QB qb;
 
     SwitchMaterial shuffleSwitch;
+    SwitchMaterial autoNextSwitch;
 
     final String[] mode_list = {"顺序做题", "只做单选", "只做多选", "错题练习", "随机做题"};
 
@@ -52,66 +42,36 @@ public class SelectMode extends AppCompatActivity {
         qb = new QB(this);
         qb_name = QB.getTikuName(Objects.requireNonNull(getIntent().getStringExtra("qb_name")));
 
-        //初始化View的变量
-        shuffleSwitch = findViewById(R.id.shuffleSwitch);
+        (shuffleSwitch = findViewById(R.id.shuffleSwitch)).setOnCheckedChangeListener(this);
+        (autoNextSwitch = findViewById(R.id.autoNextSwitch)).setOnCheckedChangeListener(this);
 
-        //设置Activity的标题栏为题库名称
-
+        //更新页面内容 通过 database
         updatePageInfo();
-        shuffleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "打乱顺序已打开", Snackbar.LENGTH_SHORT).show();
-                else
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "打乱顺序已关闭", Snackbar.LENGTH_SHORT).show();
-            }
-        });
+    }
 
-        SwitchMaterial autoNextSwitch = findViewById(R.id.autoNextSwitch);
-        autoNextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "自动跳过已打开", Snackbar.LENGTH_SHORT).show();
-                else
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "自动跳过已关闭", Snackbar.LENGTH_SHORT).show();
-            }
-        });
-
-        Button doExam = findViewById(R.id.doExamButton);
-        doExam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.doExamButton:
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectMode.this).toBundle());
-            }
-        });
-
-        Button selectMode = findViewById(R.id.selectBankButton);
-        selectMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishAfterTransition();
-            }
-        });
-
-        ImageView backImage = findViewById(R.id.backImage);
-        backImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishAfterTransition();
-            }
-        });
-
-        LinearLayout switchModeLayout = findViewById(R.id.switchModeLayout);
-        switchModeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-
+                intent.putExtra("qb_name", qb_name);
+                intent.putExtra("shuffle", shuffleSwitch.isActivated());
+                intent.putExtra("auto_skip", autoNextSwitch.isActivated());
+                if (android.os.Build.VERSION.SDK_INT < 26) {
+                    startActivity(intent);
+                } else {
+                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectMode.this).toBundle());
+                }
+                break;
+            case R.id.selectBankButton:
+            case R.id.backImage:
+                if (android.os.Build.VERSION.SDK_INT >= 26) {
+                    finishAfterTransition();
+                } else {
+                    finish();
+                }
+                break;
+            case R.id.switchModeLayout:
                 new MaterialAlertDialogBuilder(SelectMode.this)
                         .setTitle("选择做题模式")
                         .setSingleChoiceItems(mode_list, mode_selected, new DialogInterface.OnClickListener() {
@@ -130,11 +90,23 @@ public class SelectMode extends AppCompatActivity {
                         })
                         .setNegativeButton("取消", null)
                         .show();
-            }
-        });
+                break;
+        }
     }
 
-    private void updatePageInfo(){
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.autoNextSwitch:
+                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "自动跳过已打开" : "自动跳过已关闭"), Snackbar.LENGTH_SHORT).show();
+                break;
+            case R.id.shuffleSwitch:
+                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private void updatePageInfo() {
         //设置Activity的标题栏为题库名称
         ((TextView) findViewById(R.id.select_mode_name)).setText(QB.getTikuName(qb_name));
 

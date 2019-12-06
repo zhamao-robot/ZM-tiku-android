@@ -18,12 +18,14 @@
             android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/backImage"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            app:srcCompat="@drawable/ic_arrow_back_black_24dp"/>
+
+            <ImageView
+                android:id="@+id/backImage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:onClick="onClick"
+                app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
 
         <TextView
             android:id="@+id/select_mode_name"
@@ -110,15 +112,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:endColor="@color/primary"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:paddingTop="16dp"
+        android:paddingEnd="16dp"
         android:paddingBottom="16dp"
         android:switchMinWidth="156dp"
-        android:endColor="@color/primary"
         android:text="打乱选项"
         android:textSize="20sp"
-        android:background="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView"
@@ -129,14 +131,14 @@
         style="@style/Widget.MaterialComponents.CompoundButton.Switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:background="?android:attr/selectableItemBackground"
         android:endColor="@color/primary"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         android:text="正确时自动跳过"
         android:textSize="20sp"
-        android:background="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/shuffleSwitch"
@@ -146,14 +148,15 @@
         android:id="@+id/switchModeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:orientation="vertical"
+        android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
-        android:background="?android:attr/selectableItemBackground"
+        android:onClick="onClick"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/autoNextSwitch">
@@ -164,14 +167,14 @@
             android:layout_height="wrap_content"
             android:text="切换模式"
             android:textColor="@color/primaryTextColor"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/switchModeNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/secondary_text"
-            android:text="顺序做题" />
+            android:text="顺序做题"
+            android:textColor="@color/secondary_text" />
 
     </LinearLayout>
 
@@ -183,6 +186,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
+        android:onClick="onClick"
         android:text="开始做题"
         app:layout_constraintEnd_toEndOf="@+id/selectBankButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -196,6 +200,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
+        android:onClick="onClick"
         android:text="重选题库"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/doExamButton"

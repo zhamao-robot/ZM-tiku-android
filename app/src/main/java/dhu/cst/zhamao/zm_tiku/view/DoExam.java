@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import dhu.cst.zhamao.zm_tiku.R;
-import dhu.cst.zhamao.zm_tiku.utils.QB;
 
 public class DoExam extends AppCompatActivity {
 
