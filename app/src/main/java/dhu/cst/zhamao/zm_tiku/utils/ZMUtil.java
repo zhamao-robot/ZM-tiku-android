@@ -9,10 +9,11 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-class ZMUtil {
+public class ZMUtil {
 
     static String loadResource(Context context, String file_name) {
         if (null == context || null == file_name) return null;
@@ -39,7 +40,16 @@ class ZMUtil {
         return pattern.matcher(str).matches();
     }
 
-    static String implode(String del, List<String> list) {
+    public static String implode(String del, List<String> list) {
+        StringBuilder p = new StringBuilder();
+        for (int i = 0; i < list.size(); ++i) {
+            if (i != list.size() - 1) p.append(list.get(i)).append(del);
+            else p.append(list.get(i));
+        }
+        return p.toString();
+    }
+
+    public static String implode(String del, ArrayList<Integer> list) {
         StringBuilder p = new StringBuilder();
         for (int i = 0; i < list.size(); ++i) {
             if (i != list.size() - 1) p.append(list.get(i)).append(del);

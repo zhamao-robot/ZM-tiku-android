@@ -7,8 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -26,17 +28,27 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
 
     private String qb_name;
 
-    private QB qb;
+    private QB qb = null;
 
     SwitchMaterial shuffleSwitch;
     SwitchMaterial autoNextSwitch;
 
     final String[] mode_list = {"顺序做题", "只做单选", "只做多选", "错题练习", "随机做题"};
 
+    /**
+     * 当从其他页面返回到这个页面时，更新页面的内容
+     */
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updatePageInfo();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_mode);
+
 
         //初始化QB
         qb = new QB(this);
@@ -45,6 +57,20 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         (shuffleSwitch = findViewById(R.id.shuffleSwitch)).setOnCheckedChangeListener(this);
         (autoNextSwitch = findViewById(R.id.autoNextSwitch)).setOnCheckedChangeListener(this);
 
+        findViewById(R.id.arrowImage).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent = new Intent(SelectMode.this, TestBank.class);
+                intent.putExtra("user_id", qb.getUserId());
+                intent.putExtra("qb_name", qb_name);
+                startActivity(intent);
+                return true;
+            }
+        });
+        if (qb.getQBData(qb.getUserId(), qb_name) == null) {
+            qb.insertQBData(qb.getUserId(), qb_name);
+            Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();
+        }
         //更新页面内容 通过 database
         updatePageInfo();
     }
@@ -56,8 +82,9 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
                 intent.putExtra("qb_name", qb_name); //题库名称
                 intent.putExtra("shuffle", shuffleSwitch.isActivated());
-                intent.putExtra("auto_skip", autoNextSwitch.isActivated());
+                intent.putExtra("auto_skip", autoNextSwitch.isChecked());
                 intent.putExtra("qb_mode", mode_selected);
+                intent.putExtra("user_id", qb.getUserId());
 
                 if (android.os.Build.VERSION.SDK_INT < 26) {
                     startActivity(intent);
@@ -85,6 +112,11 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                         .setPositiveButton("保存", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if(mode_selected != mode_selected_tmp) {
+                                    Toast.makeText(SelectMode.this, "你切换了模式，这将刷新你的做题进度！", Toast.LENGTH_LONG).show();
+                                    Button btn = findViewById(R.id.doExamButton);
+                                    btn.setText("重新做题");
+                                }
                                 mode_selected = mode_selected_tmp;
                                 TextView switchModeNameText = findViewById(R.id.switchModeNameText);
                                 switchModeNameText.setText(mode_list[mode_selected]);
@@ -108,7 +140,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         }
     }
 
-    private void updatePageInfo() {
+    public void updatePageInfo() {
         //设置Activity的标题栏为题库名称
         ((TextView) findViewById(R.id.select_mode_name)).setText(QB.getTikuName(qb_name));
 
@@ -117,6 +149,11 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         TextView progressText = findViewById(R.id.progressText);
         String progress = info.progress + " / " + info.count;
         progressText.setText(progress);
+        //更新按钮
+        if(info.progress != 0) {
+            Button btn = findViewById(R.id.doExamButton);
+            btn.setText("继续做题");
+        }
         //更新打乱选项的开关状态
         shuffleSwitch.setActivated(info.shuffle);
         //更新做题模式的TextView
