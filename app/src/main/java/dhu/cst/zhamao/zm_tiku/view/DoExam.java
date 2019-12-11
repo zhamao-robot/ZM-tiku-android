@@ -4,7 +4,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +33,7 @@ import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
 import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySecion;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
+import dhu.cst.zhamao.zm_tiku.value.RoundBackgroundColorSpan;
 import dhu.cst.zhamao.zm_tiku.value.StatusCode;
 
 public class DoExam extends AppCompatActivity implements View.OnClickListener {
@@ -117,7 +125,24 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void updateDisplayQuestion(TikuDisplaySecion section) {
-        question_view.setText(section.question.question);
+        SpannableStringBuilder spannableStringBuilder2 = new SpannableStringBuilder(qb.getQuestionTypeCH(section.question));
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.WHITE);
+        spannableStringBuilder2.setSpan(foregroundColorSpan, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        /*
+        BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor("#20a0ff"));
+        spannableStringBuilder2.setSpan(backgroundColorSpan, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+         */
+        AbsoluteSizeSpan absoluteSizeSpan = new AbsoluteSizeSpan(35);
+        RelativeSizeSpan span = new RelativeSizeSpan(0.9f);
+        spannableStringBuilder2.setSpan(span, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+
+        String color_str = section.question.answer_type == 0 ? "#20a0ff" : "#512DA8";
+        RoundBackgroundColorSpan spans = new RoundBackgroundColorSpan(Color.parseColor(color_str),Color.WHITE, this);
+        spannableStringBuilder2.setSpan(spans, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableStringBuilder2.insert(0, section.question.question + "     ");
+        question_view.setText(spannableStringBuilder2);
+
+        //question_view.setText(section.question.question);
         layout1.setVisibility(View.GONE);
         layout2.setVisibility(View.GONE);
         layout3.setVisibility(View.GONE);
@@ -185,6 +210,10 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             StringBuilder answer = new StringBuilder();
             for (Map.Entry<String, Boolean> entry : key_down.entrySet()) {
                 if (entry.getValue()) answer.append(entry.getKey());
+            }
+            if(answer.toString().equals("")) {
+                Toast.makeText(this, "请选择选项", Toast.LENGTH_SHORT).show();
+                return;
             }
             JudgeResult result = qb.judge(qb.getUserId(), answer.toString());
             for (Map.Entry<String, Boolean> entry : key_down.entrySet()) {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SQLAndroidSettings">
+    <option name="autocommit" value="true" />
+    <option name="packageNameByDirectory">
+      <map>
+        <entry key="$PROJECT_DIR$/AndroidSqlEditorDatabases/" value="dhu.cst.zhamao.zm_tiku" />
+      </map>
+    </option>
+    <option name="storageVersion" value="2" />
+  </component>
+</project>
