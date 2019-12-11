@@ -3,11 +3,9 @@ package dhu.cst.zhamao.zm_tiku.utils;
 import android.content.Context;
 import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +21,7 @@ import dhu.cst.zhamao.zm_tiku.object.QBSection;
 import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySecion;
 import dhu.cst.zhamao.zm_tiku.object.TikuSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
+import dhu.cst.zhamao.zm_tiku.value.StatusCode;
 
 public class QB {
 
@@ -257,7 +256,7 @@ public class QB {
         db.queryQB("UPDATE qb SET answer_count = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(count), user_id, qb_name});
     }
 
-    private void pass() {
+    public void pass() {
     }
 
     public List<String> getShuffleList(String user_id) {
@@ -431,7 +430,7 @@ public class QB {
         if(qb_mode_name == null) return null;
         List<Integer> doing_list = generateDoingList(qb_name, qb_mode_name, user_id);
         if(doing_list.isEmpty()) {
-            res.warning = "你还没有错题哦";
+            res.warning = StatusCode.no_wrong_question;
             return res;
         }
         QBSection section = new QBSection(this, user_id, qb_name);

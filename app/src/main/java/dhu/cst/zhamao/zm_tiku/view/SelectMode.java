@@ -35,6 +35,8 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
 
     final String[] mode_list = {"顺序做题", "只做单选", "只做多选", "错题练习", "随机做题"};
 
+    private UserInfo info;
+
     /**
      * 当从其他页面返回到这个页面时，更新页面的内容
      */
@@ -79,12 +81,16 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.doExamButton:
+
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
                 intent.putExtra("qb_name", qb_name); //题库名称
                 intent.putExtra("shuffle", shuffleSwitch.isActivated());
                 intent.putExtra("auto_skip", autoNextSwitch.isChecked());
-                intent.putExtra("qb_mode", mode_selected);
+                intent.putExtra("qb_mode", info.mode);
                 intent.putExtra("user_id", qb.getUserId());
+                if(((Button)v).getText().equals("重新做题")) {
+                    intent.putExtra("change_mode", mode_selected);
+                }
 
                 if (android.os.Build.VERSION.SDK_INT < 26) {
                     startActivity(intent);
@@ -144,7 +150,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         //设置Activity的标题栏为题库名称
         ((TextView) findViewById(R.id.select_mode_name)).setText(QB.getTikuName(qb_name));
 
-        UserInfo info = qb.getInfo(qb.getUserId(), qb_name);
+        info = qb.getInfo(qb.getUserId(), qb_name);
         //更新progress进度显示
         TextView progressText = findViewById(R.id.progressText);
         String progress = info.progress + " / " + info.count;
@@ -156,6 +162,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         }
         //更新打乱选项的开关状态
         shuffleSwitch.setActivated(info.shuffle);
+        mode_selected = info.mode;
         //更新做题模式的TextView
         TextView currentModeText = findViewById(R.id.currentModeText);
         currentModeText.setText(mode_list[info.mode]);

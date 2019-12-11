@@ -1,7 +1,9 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,10 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +25,8 @@ import dhu.cst.zhamao.zm_tiku.R;
 import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
 import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySecion;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
+import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
+import dhu.cst.zhamao.zm_tiku.value.StatusCode;
 
 public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
@@ -47,6 +49,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
     private Button submit_btn;
 
+    private TikuDisplaySecion section;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,15 +62,9 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         bind_ans.put(R.id.answerLayout3, "C");
         bind_ans.put(R.id.answerLayout4, "D");
         bind_ans.put(R.id.answerLayout5, "E");
-        this.submit_btn = findViewById(R.id.submitButton);
 
-        ImageView backImage = findViewById(R.id.backImage);
-        backImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishAfterTransition();
-            }
-        });
+        submit_btn = findViewById(R.id.submitButton);
+
         qb = new QB(this);
         key_down = new LinkedHashMap<>();
 
@@ -85,8 +83,36 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         this.qb_mode = this.getIntent().getIntExtra("qb_mode", 0);
         this.auto_skip = this.getIntent().getBooleanExtra("auto_skip", false);
         Toast.makeText(this, "shuffle: " + this.shuffle + ", mode: " + this.qb_mode + ", skip: " + this.auto_skip, Toast.LENGTH_LONG).show();
+        int change_mode = this.getIntent().getIntExtra("change_mode", -1);
+        if (change_mode != -1) {
+            section = qb.changeMode(user_id, qb_name, change_mode, shuffle);
+            qb_mode = change_mode;
+        } else {
+            section = qb.next(qb.getUserId(), qb_name, shuffle);
+        }
+        if (section.warning == StatusCode.no_wrong_question) {
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(DoExam.this);
+            normalDialog.setMessage("你还没有错题哦！");
+            normalDialog.setNegativeButton("返回",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finishAfterTransition();
+                        }
+                    });
+            // 显示
+            normalDialog.show();
+            return;
+        }
+        ImageView backImage = findViewById(R.id.backImage);
+        backImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishAfterTransition();
+            }
+        });
 
-        TikuDisplaySecion section = qb.next(qb.getUserId(), qb_name, shuffle);
         updateDisplayQuestion(section);
     }
 
@@ -102,11 +128,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         layout3.setEnabled(true);
         layout4.setEnabled(true);
         layout5.setEnabled(true);
-        setChoiceStatus(layout1, R.id.answerLayout1, false);
-        setChoiceStatus(layout2, R.id.answerLayout2, false);
-        setChoiceStatus(layout3, R.id.answerLayout3, false);
-        setChoiceStatus(layout4, R.id.answerLayout4, false);
-        setChoiceStatus(layout5, R.id.answerLayout5, false);
+        setChoiceStatus(layout1, R.id.answerLayout1, false, true);
         submit_btn.setText("提交");
 
         for (Map.Entry<String, String> entry : section.question.answer.entrySet()) {
@@ -159,7 +181,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void onSubmit() {
-        if(submit_btn.getText().equals("提交")) {
+        if (submit_btn.getText().equals("提交")) {
             StringBuilder answer = new StringBuilder();
             for (Map.Entry<String, Boolean> entry : key_down.entrySet()) {
                 if (entry.getValue()) answer.append(entry.getKey());
@@ -180,7 +202,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             layout3.setEnabled(false);
             layout4.setEnabled(false);
             layout5.setEnabled(false);
-            if(result.status && auto_skip) {
+            if (result.status && auto_skip) {
                 Timer updateResourceTimer = new Timer();
                 TimerTask mTimerTask = new TimerTask() {//创建一个线程来执行run方法中的代码
                     @Override
@@ -196,7 +218,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 };
                 updateResourceTimer.schedule(mTimerTask, 800);
             }
-        } else if(submit_btn.getText().equals("下一题")) {
+        } else if (submit_btn.getText().equals("下一题")) {
             TikuDisplaySecion section = qb.next(qb.getUserId(), qb_name, shuffle);
             updateDisplayQuestion(section);
         }
@@ -207,20 +229,33 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             String ans = bind_ans.get(id);
             //Log.e("DoExam", "Choice Clicked: " + ans);
             Boolean key_stat = key_down.get(ans);
-            if(key_stat == null) throw new NullPointerException("Null Pointer");
-            setChoiceStatus(view, id, !key_stat);
-            if(this.auto_skip) {
+            if (key_stat == null) throw new NullPointerException("Null Pointer");
+            setChoiceStatus(view, id, !key_stat, section.question.answer_type == 0);
+            if (this.auto_skip && section.question.answer_type == 0) {
                 onSubmit();
             }
-        }catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             Log.e("DoExam", "NullPointerException");
         }
     }
 
-    private void setChoiceStatus(LinearLayout view, int id, boolean status) {
+    private void setChoiceStatus(LinearLayout view, int id, boolean status, boolean reset_others) {
+        MaterialTextView cur;
+        if (reset_others) {
+            for (Map.Entry<Integer, String> entry : bind_ans.entrySet()) {
+                if (entry.getKey() != id) {
+                    key_down.put(entry.getValue(), false);
+                    cur = (MaterialTextView) bind_view.get(bind_ans.get(entry.getKey()));
+                    if (cur != null) {
+                        setAnswerColor(cur, R.color.primary, R.drawable.circle);
+                    }
+                }
+            }
+        }
         key_down.put(bind_ans.get(id), status);
-        MaterialTextView cur = (MaterialTextView) view.getChildAt(0);
+        cur = (MaterialTextView) view.getChildAt(0);
         setAnswerColor(cur, status ? R.color.white : R.color.primary, status ? R.drawable.circle_solid : R.drawable.circle);
+        qb.pass();
     }
 
     /**
