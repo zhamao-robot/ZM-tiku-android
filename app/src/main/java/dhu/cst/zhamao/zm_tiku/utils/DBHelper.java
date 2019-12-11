@@ -106,6 +106,13 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean setUserShuffle(String user_id, List<String> shuffle) {
+        if (db == null) db = getReadableDatabase();
+        Cursor r = db.rawQuery("UPDATE user_data SET qb_shuffle = ? WHERE id = ?", new String[]{(new Gson()).toJson(shuffle), user_id});
+        r.close();
+        return true;
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

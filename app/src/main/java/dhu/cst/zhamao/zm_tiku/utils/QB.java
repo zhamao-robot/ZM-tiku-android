@@ -1,8 +1,8 @@
 package dhu.cst.zhamao.zm_tiku.utils;
 
 import android.content.Context;
+import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,8 +18,10 @@ import com.google.gson.JsonParser;
 
 import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
 import dhu.cst.zhamao.zm_tiku.object.QBSection;
+import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySecion;
 import dhu.cst.zhamao.zm_tiku.object.TikuSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
+import dhu.cst.zhamao.zm_tiku.value.StatusCode;
 
 public class QB {
 
@@ -254,10 +256,10 @@ public class QB {
         db.queryQB("UPDATE qb SET answer_count = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(count), user_id, qb_name});
     }
 
-    private void pass() {
+    public void pass() {
     }
 
-    private List<String> getShuffleList(String user_id) {
+    public List<String> getShuffleList(String user_id) {
         Map<String, String> user = getDB().getUserData(user_id);
         if (user.isEmpty()) return new ArrayList<>();
         if (user.containsKey("qb_shuffle"))
@@ -330,7 +332,7 @@ public class QB {
             if (user.isEmpty()) res.shuffle = false;
             String shuffle = user.get("qb_shuffle");
             if (shuffle != null && !Objects.equals(shuffle, "")) res.shuffle = true;
-            res.count = rs.doing_list.size();
+            res.count = rs.doing_list.size() == 0 ? getTikuData(qb_name).size() : rs.doing_list.size();
             res.progress = rs.current_ans;
         }
         return res;
@@ -338,4 +340,125 @@ public class QB {
 
     ////////////// non internal API part
 
+    public JudgeResult judge(String user_id, String answer) {
+        List<QBSection> section_list = db.queryQB("SELECT * FROM qb WHERE user_id = ? AND doing = 1", new String[]{user_id});
+        if (section_list.isEmpty()) return null;
+        QBSection section = section_list.get(0);
+        TikuSection current_question = getQuestion(section.qb_name, section.doing_list, section.current_ans, false);
+        answer = getTrueAnswer(answer.trim(), current_question.answer_type);
+        JudgeResult r = section.judge(this, current_question, answer);
+        Log.i("QB", "Android判题：" + user_id + "(" + section.qb_name + ") " + (r.status ? "正确" : "错误"));
+        r.is_end = false;
+        int next = section.current_ans + 1;
+        if (next < section.doing_list.size()) {
+            section.current_ans = next;
+            boolean shuffle = !getShuffleList(user_id).isEmpty();
+            TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
+            if (shuffle) db.setUserShuffle(user_id, question.shuffle);
+
+            TikuDisplaySecion res_next = new TikuDisplaySecion();
+            res_next.question = question;
+            res_next.id = section.doing_list.get(next);
+            res_next.type = getQuestionTypeCH(question);
+            r.next = res_next;
+        } else {
+            Map<String, String> res_message = new LinkedHashMap<>();
+            res_message.put("title", "你已经做完了本轮题目啦！");
+            List<Integer> doing_list = generateDoingList(section.qb_name, "normal");
+            String msg = "";
+            if (section.qb_mode != 3) {
+                Integer right = section.right_count, total = section.answer_count;
+                double percent = (right.doubleValue() / total.doubleValue()) * 100.0;
+                msg = msg + "正确题数：" + right + "，总共题数：" + total + "，正确率：" + percent + "%";
+                if (right.equals(total)) {
+                    msg += "。恭喜你，已经做对了所有题目！";
+                    r.is_end = true;
+                } else {
+                    msg += "。上一轮有错题哦，已将你的题库设置为你上一轮的错题集，点击下面的按钮进行下一轮";
+                    doing_list = section.wrong;
+                }
+            } else {
+                msg = "点击按钮进行返回";
+                r.is_end = true;
+            }
+            res_message.put("content", msg);
+            r.res_message = res_message;
+            section.doing = 0;
+            section.current_ans = 0;
+            section.doing_list = doing_list;
+            section.answer_count = 0;
+            section.right_count = 0;
+            section.qb_mode = 0;
+            section.wrong = new ArrayList<>();
+        }
+        r.right_answer = current_question.key;
+        section.commitChange(db);
+        return r;
+    }
+
+    public TikuDisplaySecion next(String user_id, String qb_name, boolean shuffle) {
+        if (getTikuName(qb_name) == null) return null;
+        QBSection status = getQBData(user_id, qb_name);
+        if(status == null) insertQBData(user_id, qb_name);
+        status = getQBData(user_id, qb_name);
+        if(status == null) return null;
+        db.queryQB("UPDATE qb SET doing = 0 WHERE user_id = ?", new String[]{user_id});
+        if(status.doing_list.isEmpty()) {
+            status.doing_list = generateDoingList(qb_name, "normal");
+        }
+        status.doing = 1;
+        int current_ans = status.current_ans;
+        TikuSection question = getQuestion(qb_name, status.doing_list, current_ans, shuffle);
+        if(shuffle)
+            db.setUserShuffle(user_id, question.shuffle);
+        else if (!getShuffleList(user_id).isEmpty())
+            db.setUserShuffle(user_id, new ArrayList<String>());
+
+        TikuDisplaySecion res = new TikuDisplaySecion();
+        res.question = question;
+        res.id = status.doing_list.get(current_ans);
+        res.type = getQuestionTypeCH(question);
+        status.commitChange(db);
+        return res;
+    }
+
+    public TikuDisplaySecion changeMode(String user_id, String qb_name, int qb_mode, boolean shuffle) {
+        if(getTikuName(qb_name) == null) return null;
+        if(qb_mode > 7) qb_mode = 0;
+        TikuDisplaySecion res = new TikuDisplaySecion();
+        String qb_mode_name = convertModeName(qb_mode);
+        if(qb_mode_name == null) return null;
+        List<Integer> doing_list = generateDoingList(qb_name, qb_mode_name, user_id);
+        if(doing_list.isEmpty()) {
+            res.warning = StatusCode.no_wrong_question;
+            return res;
+        }
+        QBSection section = new QBSection(this, user_id, qb_name);
+        section.doing_list = doing_list;
+        section.doing = 1;
+        section.current_ans = 0;
+        section.answer_count = 0;
+        section.right_count = 0;
+        section.qb_mode = qb_mode;
+        section.commitChange();
+        TikuSection question = getQuestion(qb_name, doing_list, 0, shuffle);
+        if(shuffle)
+            getDB().setUserShuffle(user_id, question.shuffle);
+        else if (getShuffleList(user_id).isEmpty())
+            getDB().setUserShuffle(user_id, new ArrayList<String>());
+        res.mode = qb_mode_name;
+        res.question = question;
+        res.id = doing_list.get(0);
+        res.type = getQuestionTypeCH(question);
+        return res;
+    }
+
+    private String convertModeName(int qb_mode) {
+        List<String> ls = Arrays.asList("normal", "单选", "多选", "错题", "随机", "高频", "单选随机", "多选随机");
+        try {
+            return ls.get(qb_mode);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
 }
