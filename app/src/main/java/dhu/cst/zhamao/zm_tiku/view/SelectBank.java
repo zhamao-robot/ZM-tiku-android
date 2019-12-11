@@ -5,13 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Timer;
@@ -28,13 +34,39 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.select_bank);
+        setContentView(R.layout.drawer_layout);
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         final FloatingActionButton updateButton = findViewById(R.id.upateButton);
+
+        toolbar.setTitle("选择题库");
+        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("ZM DEBUG", "onClick: drawer");
+                drawer.openDrawer(GravityCompat.START);
+            }
+        });
+
         updateButton.setOnClickListener(new OnClickUpdateListener());
         (materialCardView1 = findViewById(R.id.materialCardView1)).setOnClickListener(this);
         (materialCardView2 = findViewById(R.id.materialCardView2)).setOnClickListener(this);
         (materialCardView3 = findViewById(R.id.materialCardView3)).setOnClickListener(this);
         (materialCardView4 = findViewById(R.id.materialCardView4)).setOnClickListener(this);
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                int itemId = item.getItemId();
+                Snackbar.make(findViewById(R.id.ConstraintLayout), itemId , Snackbar.LENGTH_SHORT).show();
+                item.setChecked(true);
+                drawer.closeDrawers();
+                return true;
+            }
+        });
     }
 
     public class OnClickUpdateListener implements View.OnClickListener {
