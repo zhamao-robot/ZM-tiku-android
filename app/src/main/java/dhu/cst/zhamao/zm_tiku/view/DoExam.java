@@ -239,7 +239,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                TikuDisplaySecion section = qb.next(qb.getUserId(), qb_name, shuffle);
+                                section = qb.next(qb.getUserId(), qb_name, shuffle);
                                 updateDisplayQuestion(section);
                             }
                         });
@@ -248,7 +248,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 updateResourceTimer.schedule(mTimerTask, 800);
             }
         } else if (submit_btn.getText().equals("下一题")) {
-            TikuDisplaySecion section = qb.next(qb.getUserId(), qb_name, shuffle);
+            section = qb.next(qb.getUserId(), qb_name, shuffle);
             updateDisplayQuestion(section);
         }
     }
