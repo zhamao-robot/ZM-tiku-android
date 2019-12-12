@@ -8,8 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.style.AbsoluteSizeSpan;
-import android.text.style.BackgroundColorSpan;
+
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
@@ -30,7 +29,7 @@ import java.util.TimerTask;
 
 import dhu.cst.zhamao.zm_tiku.R;
 import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
-import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySecion;
+import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySection;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 import dhu.cst.zhamao.zm_tiku.value.RoundBackgroundColorSpan;
@@ -41,7 +40,6 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     private String qb_name;
     private String user_id;
     private boolean shuffle;
-    private int qb_mode;
     private boolean auto_skip;
 
     private LinearLayout layout1, layout2, layout3, layout4, layout5;
@@ -57,7 +55,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
     private Button submit_btn;
 
-    private TikuDisplaySecion section;
+    private TikuDisplaySection section;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,15 +86,14 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         this.qb_name = this.getIntent().getStringExtra("qb_name");
         this.user_id = this.getIntent().getStringExtra("user_id");
         this.shuffle = this.getIntent().getBooleanExtra("shuffle", false);
-        this.qb_mode = this.getIntent().getIntExtra("qb_mode", 0);
+        int qb_mode = this.getIntent().getIntExtra("qb_mode", 0);
         this.auto_skip = this.getIntent().getBooleanExtra("auto_skip", false);
-        Toast.makeText(this, "shuffle: " + this.shuffle + ", mode: " + this.qb_mode + ", skip: " + this.auto_skip, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "shuffle: " + this.shuffle + ", mode: " + qb_mode + ", skip: " + this.auto_skip, Toast.LENGTH_LONG).show();
         int change_mode = this.getIntent().getIntExtra("change_mode", -1);
         if (change_mode != -1) {
             section = qb.changeMode(user_id, qb_name, change_mode, shuffle);
-            qb_mode = change_mode;
         } else {
-            section = qb.next(qb.getUserId(), qb_name, shuffle);
+            section = qb.next(user_id, qb_name, shuffle);
         }
         if (section.warning == StatusCode.no_wrong_question) {
             final AlertDialog.Builder normalDialog =
@@ -124,7 +121,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         updateDisplayQuestion(section);
     }
 
-    private void updateDisplayQuestion(TikuDisplaySecion section) {
+    private void updateDisplayQuestion(TikuDisplaySection section) {
         SpannableStringBuilder spannableStringBuilder2 = new SpannableStringBuilder(qb.getQuestionTypeCH(section.question));
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.WHITE);
         spannableStringBuilder2.setSpan(foregroundColorSpan, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -132,7 +129,6 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(Color.parseColor("#20a0ff"));
         spannableStringBuilder2.setSpan(backgroundColorSpan, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
          */
-        AbsoluteSizeSpan absoluteSizeSpan = new AbsoluteSizeSpan(35);
         RelativeSizeSpan span = new RelativeSizeSpan(0.9f);
         spannableStringBuilder2.setSpan(span, 0, spannableStringBuilder2.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
 
@@ -215,7 +211,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 Toast.makeText(this, "请选择选项", Toast.LENGTH_SHORT).show();
                 return;
             }
-            JudgeResult result = qb.judge(qb.getUserId(), answer.toString());
+            JudgeResult result = qb.judge(user_id, answer.toString());
             for (Map.Entry<String, Boolean> entry : key_down.entrySet()) {
                 if (entry.getValue())
                     setAnswerColor((MaterialTextView) Objects.requireNonNull(bind_view.get(entry.getKey())), R.color.white, R.drawable.circle_red);
@@ -231,6 +227,15 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             layout3.setEnabled(false);
             layout4.setEnabled(false);
             layout5.setEnabled(false);
+            if(result.is_end) {
+                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finishAfterTransition();
+                    }
+                });
+                return;
+            }
             if (result.status && auto_skip) {
                 Timer updateResourceTimer = new Timer();
                 TimerTask mTimerTask = new TimerTask() {//创建一个线程来执行run方法中的代码
@@ -239,7 +244,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                section = qb.next(qb.getUserId(), qb_name, shuffle);
+                                section = qb.next(user_id, qb_name, shuffle);
                                 updateDisplayQuestion(section);
                             }
                         });
@@ -247,8 +252,9 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 };
                 updateResourceTimer.schedule(mTimerTask, 800);
             }
+
         } else if (submit_btn.getText().equals("下一题")) {
-            section = qb.next(qb.getUserId(), qb_name, shuffle);
+            section = qb.next(user_id, qb_name, shuffle);
             updateDisplayQuestion(section);
         }
     }

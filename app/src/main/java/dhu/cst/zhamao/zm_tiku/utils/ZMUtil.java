@@ -1,17 +1,19 @@
 package dhu.cst.zhamao.zm_tiku.utils;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.util.Log;
 
-import com.google.gson.Gson;
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+
 
 public class ZMUtil {
 
@@ -35,11 +37,6 @@ public class ZMUtil {
         }
     }
 
-    static boolean isNumeric(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        return pattern.matcher(str).matches();
-    }
-
     public static String implode(String del, List<String> list) {
         StringBuilder p = new StringBuilder();
         for (int i = 0; i < list.size(); ++i) {
@@ -58,13 +55,30 @@ public class ZMUtil {
         return p.toString();
     }
 
-    static String jsonEncode(List list) {
-        Gson gson = new Gson();
-        return gson.toJson(list);
-    }
-
     public static int px2dp(Context context, float pxValue) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static void showDialog(Context context, String title, String content, DialogInterface.OnClickListener onClickListener) {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(context);
+        normalDialog.setTitle(title);
+        normalDialog.setMessage(content);
+        normalDialog.setNegativeButton("返回", onClickListener);
+        normalDialog.show();
+    }
+
+    public static void initUserDB(QB qb){
+        Cursor sqlite = qb.getDB().get().rawQuery("SELECT * FROM user_data WHERE id = ?", new String[]{qb.getUserId()});
+        if(sqlite.getCount() == 0) {
+            Log.e("QB", "新增本地用户中");
+            qb.getDB().queryQB("INSERT INTO user_data VALUES (?,?,?,?)", new String[]{
+                    "7cf10d37-ee8d-437b-b2a2-7b6a4c97ab5a",
+                    "本地用户",
+                    "",
+                    "0"
+            });
+        }
+        sqlite.close();
     }
 }

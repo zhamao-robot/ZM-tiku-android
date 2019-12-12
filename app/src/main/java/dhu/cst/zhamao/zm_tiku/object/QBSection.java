@@ -78,15 +78,17 @@ public class QBSection {
     public JudgeResult judge(QB qb, TikuSection question, String answer) {
         String da_an = question.key;
         List<String> shuffle_list = qb.getShuffleList(user_id);
+        Map<String, String> oj = new LinkedHashMap<>();
         if (shuffle_list.size() != 0) {
             String s_tmp = qb.getTrueAnswer(ZMUtil.implode("", shuffle_list), 0);
             String[] s_tmp2 = s_tmp.split("");
-            Map<String, String> oj = new LinkedHashMap<>();
             for (String v : s_tmp2) {
+                if(v.equals("")) continue;
                 oj.put(v, shuffle_list.remove(0));
             }
             StringBuilder a = new StringBuilder();
             for (String v : answer.split("")) {
+                if(v.equals("")) continue;
                 a.append(oj.get(v));
             }
             answer = qb.getTrueAnswer(a.toString(), 0);//用户的答案（转换为原始答案）
@@ -94,6 +96,7 @@ public class QBSection {
         JudgeResult result = new JudgeResult();
         result.status = answer.equals(da_an);//返回题目对错情况
         result.id = doing_list.get(current_ans);
+        shuffle_list = qb.getShuffleList(user_id);
         if (shuffle_list.size() != 0) {
             String origin_key = question.key;
             String s_tmp = qb.getTrueAnswer(ZMUtil.implode("", shuffle_list), 0);
@@ -101,9 +104,12 @@ public class QBSection {
             String[] origin_key2 = origin_key.split("");
             StringBuilder question_key = new StringBuilder();
             for (String v : origin_key2) {
-                int ss = shuffle_list.indexOf(v);
-                question_key.append(s_tmp2[ss]);
+                if(v.equals("")) continue;
+                for(Map.Entry<String, String> entry : oj.entrySet()) {
+                    if(entry.getValue().equals(v)) question_key.append(entry.getKey());
+                }
             }
+
             question.key = qb.getTrueAnswer(question_key.toString(), 0);
         }
         result.right_answer = question.key;

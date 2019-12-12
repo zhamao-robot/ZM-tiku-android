@@ -84,7 +84,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
 
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
                 intent.putExtra("qb_name", qb_name); //题库名称
-                intent.putExtra("shuffle", shuffleSwitch.isActivated());
+                intent.putExtra("shuffle", shuffleSwitch.isChecked());
                 intent.putExtra("auto_skip", autoNextSwitch.isChecked());
                 intent.putExtra("qb_mode", info.mode);
                 intent.putExtra("user_id", qb.getUserId());

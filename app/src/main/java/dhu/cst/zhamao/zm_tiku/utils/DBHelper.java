@@ -1,14 +1,11 @@
 package dhu.cst.zhamao.zm_tiku.utils;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,7 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import dhu.cst.zhamao.zm_tiku.R;
 import dhu.cst.zhamao.zm_tiku.object.QBSection;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -25,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private SQLiteDatabase db = null;
     private Context context;
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DB_NAME, null, 3);
         this.context = context;
     }
@@ -56,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Toast.makeText(context, "创建数据库中", Toast.LENGTH_SHORT).show();
     }
 
-    public SQLiteDatabase get() {
+    SQLiteDatabase get() {
         return getWritableDatabase();
     }
 
@@ -88,7 +84,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public Map<String, String> getUserData(String user_id) {
+    Map<String, String> getUserData(String user_id) {
         if (db == null) db = getReadableDatabase();
         Cursor result = db.rawQuery("SELECT * FROM user_data WHERE id = ?", new String[]{user_id});
         result.moveToFirst();
@@ -106,11 +102,9 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean setUserShuffle(String user_id, List<String> shuffle) {
-        if (db == null) db = getReadableDatabase();
-        Cursor r = db.rawQuery("UPDATE user_data SET qb_shuffle = ? WHERE id = ?", new String[]{(new Gson()).toJson(shuffle), user_id});
-        r.close();
-        return true;
+    void setUserShuffle(String user_id, List<String> shuffle) {
+        if (db == null) db = getWritableDatabase();
+        queryQB("UPDATE user_data SET qb_shuffle = ? WHERE id = ?", new String[]{(new Gson()).toJson(shuffle), user_id});
     }
 
     @Override

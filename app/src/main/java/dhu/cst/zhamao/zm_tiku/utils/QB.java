@@ -15,10 +15,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
 import dhu.cst.zhamao.zm_tiku.object.QBSection;
-import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySecion;
+import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySection;
 import dhu.cst.zhamao.zm_tiku.object.TikuSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 import dhu.cst.zhamao.zm_tiku.value.StatusCode;
@@ -93,7 +94,7 @@ public class QB {
         return sorted.toUpperCase();
     }
 
-    public Map<String, TikuSection> getTikuData(String qb_name) {
+    private Map<String, TikuSection> getTikuData(String qb_name) {
         Map<String, TikuSection> list = new LinkedHashMap<>();
         Gson gson = new Gson();
         String tiku_data = ZMUtil.loadResource(context, "tiku/" + qb_name + ".json");
@@ -127,11 +128,11 @@ public class QB {
         });
     }
 
-    public List<Integer> generateDoingList(String qb_name, String rules) {
+    private List<Integer> generateDoingList(String qb_name, String rules) {
         return generateDoingList(qb_name, rules, null);
     }
 
-    public List<Integer> generateDoingList(String qb_name, String rules, String user_id) {
+    private List<Integer> generateDoingList(String qb_name, String rules, String user_id) {
         Map<String, TikuSection> qb = getTikuData(qb_name);
         List<Integer> ls = new ArrayList<>();
         switch (rules) {
@@ -175,18 +176,6 @@ public class QB {
         return ls;
     }
 
-    public void setDoingList(String user_id, String qb_name, List<Integer> list) {
-        db.queryQB("UPDATE qb SET doing_list = ? WHERE user_id = ? AND qb_name = ?", new String[]{ZMUtil.jsonEncode(list), user_id, qb_name});
-    }
-
-    public void setWrongList(String user_id, String qb_name, List<Integer> list) {
-        db.queryQB("UPDATE qb SET wrong = ? WHERE user_id = ? AND qb_name = ?", new String[]{ZMUtil.jsonEncode(list), user_id, qb_name});
-    }
-
-    public void setDoing(String user_id, String qb_name, boolean status) {
-        db.queryQB("UPDATE qb SET doing = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(status ? 1 : 0), user_id, qb_name});
-    }
-
     public String getQuestionTypeCH(TikuSection q) {
         List<String> ls = Arrays.asList("单选题", "多选题", "填空题");
         try {
@@ -201,9 +190,9 @@ public class QB {
      * @param doing_list  正在做的列表
      * @param current_ans 当前的答案
      * @param shuffle     是否打乱选项顺序
-     * @return TikuSection|null
+     * @return TikuSection
      */
-    public TikuSection getQuestion(String qb_name, List<Integer> doing_list, int current_ans, boolean shuffle) {
+    private TikuSection getQuestion(String qb_name, List<Integer> doing_list, int current_ans, boolean shuffle) {
         try {
             Map<String, TikuSection> qb = getTikuData(qb_name);
             int t = doing_list.get(current_ans);
@@ -229,31 +218,8 @@ public class QB {
             return section;
         } catch (NullPointerException e) {
             //Log.e("QB", "getQuestion获取Map错误！");
-            return null;
+            return new TikuSection();
         }
-    }
-
-    public void setCurrentAns(String user_id, String qb_name, int num) {
-        db.queryQB("UPDATE qb SET current_ans = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(num), user_id, qb_name});
-    }
-
-    public boolean isRightId(String id, String qb_name) {
-        return ZMUtil.isNumeric(id) && getTikuData(qb_name).containsKey(id);
-    }
-
-    public void setQBMode(String user_id, String qb_name, String mode) {
-        List<String> ls = Arrays.asList("跳转", "单选", "多选", "错题", "随机", "高频", "单选随机", "多选随机");
-        int mode_id = ls.indexOf(mode);
-        if (mode_id == -1) mode_id = 0;
-        db.queryQB("UPDATE qb SET qb_mode = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(mode_id), user_id, qb_name});
-    }
-
-    public void setAnswerCount(String user_id, String qb_name, int count) {
-        db.queryQB("UPDATE qb SET answer_count = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(count), user_id, qb_name});
-    }
-
-    public void setRightCount(String user_id, String qb_name, int count) {
-        db.queryQB("UPDATE qb SET answer_count = ? WHERE user_id = ? AND qb_name = ?", new String[]{Integer.toString(count), user_id, qb_name});
     }
 
     public void pass() {
@@ -262,55 +228,11 @@ public class QB {
     public List<String> getShuffleList(String user_id) {
         Map<String, String> user = getDB().getUserData(user_id);
         if (user.isEmpty()) return new ArrayList<>();
-        if (user.containsKey("qb_shuffle"))
-            return Arrays.asList(Objects.requireNonNull(user.get("qb_shuffle")).split(""));
+        if (user.containsKey("qb_shuffle")) {
+            if(Objects.equals(user.get("qb_shuffle"), "")) return new ArrayList<>();
+            return (new Gson()).fromJson(user.get("qb_shuffle"), new TypeToken<List<String>>() {}.getType());
+        }
         return new ArrayList<>();
-    }
-
-    private JudgeResult judgeQuestion(String user_id, QBSection qb_data, TikuSection question, String answer) {
-        //ZMBuf::set("normal_count", ZMBuf::get("normal_count") + 1);
-        if (qb_data.qb_mode != 3) pass();
-        String da_an = question.key;
-        List<String> shuffle_list = getShuffleList(user_id);
-        if (shuffle_list.size() != 0) {
-            String s_tmp = getTrueAnswer(ZMUtil.implode("", shuffle_list), 0);
-            String[] s_tmp2 = s_tmp.split("");
-            Map<String, String> oj = new LinkedHashMap<>();
-            for (String v : s_tmp2) {
-                oj.put(v, shuffle_list.remove(0));
-            }
-            StringBuilder a = new StringBuilder();
-            for (String v : answer.split("")) {
-                a.append(oj.get(v));
-            }
-            answer = getTrueAnswer(a.toString(), 0);//用户的答案（转换为原始答案）
-        }
-        JudgeResult result = new JudgeResult();
-        result.status = answer.equals(da_an);//返回题目对错情况
-        result.id = qb_data.getDoingList().get(qb_data.current_ans);
-        if (shuffle_list.size() != 0) {
-            String origin_key = question.key;
-            String s_tmp = getTrueAnswer(ZMUtil.implode("", shuffle_list), 0);
-            String[] s_tmp2 = s_tmp.split("");
-            String[] origin_key2 = origin_key.split("");
-            StringBuilder question_key = new StringBuilder();
-            for (String v : origin_key2) {
-                int ss = shuffle_list.indexOf(v);
-                question_key.append(s_tmp2[ss]);
-            }
-            question.key = getTrueAnswer(question_key.toString(), 0);
-        }
-        result.right_answer = question.key;
-        if (qb_data.qb_mode != 3) {
-            setAnswerCount(user_id, qb_data.qb_name, qb_data.answer_count + 1);
-            if (answer.equals(da_an))
-                setRightCount(user_id, qb_data.qb_name, qb_data.right_count + 1);
-            else if (qb_data.getWrong().contains(qb_data.getDoingList().get(qb_data.current_ans))) {
-                qb_data.getWrong().add(qb_data.getDoingList().get(qb_data.current_ans));
-                setWrongList(user_id, qb_data.qb_name, qb_data.getWrong());
-            }
-        }
-        return result;
     }
 
     public UserInfo getInfo(String user_id, String qb_name) {
@@ -356,7 +278,7 @@ public class QB {
             TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
             if (shuffle) db.setUserShuffle(user_id, question.shuffle);
 
-            TikuDisplaySecion res_next = new TikuDisplaySecion();
+            TikuDisplaySection res_next = new TikuDisplaySection();
             res_next.question = question;
             res_next.id = section.doing_list.get(next);
             res_next.type = getQuestionTypeCH(question);
@@ -369,13 +291,14 @@ public class QB {
             if (section.qb_mode != 3) {
                 Integer right = section.right_count, total = section.answer_count;
                 double percent = (right.doubleValue() / total.doubleValue()) * 100.0;
-                msg = msg + "正确题数：" + right + "，总共题数：" + total + "，正确率：" + percent + "%";
+                msg = msg + "正确题数：" + right + "，总共题数：" + total + "\n正确率：" + percent + "%";
                 if (right.equals(total)) {
-                    msg += "。恭喜你，已经做对了所有题目！";
+                    msg += "\n恭喜你，已经做对了所有题目！";
                     r.is_end = true;
                 } else {
-                    msg += "。上一轮有错题哦，已将你的题库设置为你上一轮的错题集，点击下面的按钮进行下一轮";
+                    msg += "\n上一轮有错题哦，已将你的题库设置为你上一轮的错题集，点击下面的按钮进行下一轮";
                     doing_list = section.wrong;
+                    r.is_end = true;
                 }
             } else {
                 msg = "点击按钮进行返回";
@@ -396,7 +319,7 @@ public class QB {
         return r;
     }
 
-    public TikuDisplaySecion next(String user_id, String qb_name, boolean shuffle) {
+    public TikuDisplaySection next(String user_id, String qb_name, boolean shuffle) {
         if (getTikuName(qb_name) == null) return null;
         QBSection status = getQBData(user_id, qb_name);
         if(status == null) insertQBData(user_id, qb_name);
@@ -414,7 +337,7 @@ public class QB {
         else if (!getShuffleList(user_id).isEmpty())
             db.setUserShuffle(user_id, new ArrayList<String>());
 
-        TikuDisplaySecion res = new TikuDisplaySecion();
+        TikuDisplaySection res = new TikuDisplaySection();
         res.question = question;
         res.id = status.doing_list.get(current_ans);
         res.type = getQuestionTypeCH(question);
@@ -422,10 +345,10 @@ public class QB {
         return res;
     }
 
-    public TikuDisplaySecion changeMode(String user_id, String qb_name, int qb_mode, boolean shuffle) {
+    public TikuDisplaySection changeMode(String user_id, String qb_name, int qb_mode, boolean shuffle) {
         if(getTikuName(qb_name) == null) return null;
         if(qb_mode > 7) qb_mode = 0;
-        TikuDisplaySecion res = new TikuDisplaySecion();
+        TikuDisplaySection res = new TikuDisplaySection();
         String qb_mode_name = convertModeName(qb_mode);
         if(qb_mode_name == null) return null;
         List<Integer> doing_list = generateDoingList(qb_name, qb_mode_name, user_id);

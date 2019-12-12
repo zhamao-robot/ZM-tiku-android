@@ -1,5 +1,6 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
+import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -24,12 +27,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dhu.cst.zhamao.zm_tiku.R;
+import dhu.cst.zhamao.zm_tiku.utils.QB;
+import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 
 public class SelectBank extends AppCompatActivity implements View.OnClickListener {
 
     MaterialCardView materialCardView1, materialCardView2, materialCardView3, materialCardView4;
 
     boolean isUpdateActivated = false;
+
+    private long mExitTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +64,17 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
         (materialCardView3 = findViewById(R.id.materialCardView3)).setOnClickListener(this);
         (materialCardView4 = findViewById(R.id.materialCardView4)).setOnClickListener(this);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
-                Snackbar.make(findViewById(R.id.ConstraintLayout), itemId , Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.ConstraintLayout), itemId, Snackbar.LENGTH_SHORT).show();
                 item.setChecked(true);
                 drawer.closeDrawers();
                 return true;
             }
         });
+        ZMUtil.initUserDB(new QB(this));
     }
 
     public class OnClickUpdateListener implements View.OnClickListener {
@@ -74,7 +82,7 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
         public void onClick(final View v) {
             Animation circle_anim = AnimationUtils.loadAnimation(SelectBank.this, R.anim.rotate);
             LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
-            if(isUpdateActivated) {
+            if (isUpdateActivated) {
                 Snackbar.make(findViewById(R.id.ConstraintLayout), "已经在更新了！", Snackbar.LENGTH_SHORT).show();
                 return;
             } else {
@@ -123,6 +131,16 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
             startActivity(intent);
         } else {
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();
+        } else {
+            finish();
         }
     }
 }
