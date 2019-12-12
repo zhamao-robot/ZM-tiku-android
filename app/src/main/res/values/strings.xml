@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">炸毛题库</string>
     <string name="title_activity_test_bank">TestBank</string>
+    <string name="copyright">Copyright © 2018–2019 CrazyBot. All rights reserved.</string>
+    <string name="default_version">应用版本：0.0.1</string>
+    <string name="default_tiku_version">题库版本：1970.1.1.1</string>
+    <string name="user_service">用户协议</string>
+    <string name="zm_homepage">炸毛官网</string>
+    <string name="divide_char">|</string>
+    <string name="contact">· 炸毛帮助群：861087622\n· 联系作者：627577391（鲸鱼）\n· 联系作者：2257685948（Crane）</string>
 </resources>

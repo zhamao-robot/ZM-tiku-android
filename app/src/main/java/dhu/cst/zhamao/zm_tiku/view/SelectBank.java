@@ -23,10 +23,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.File;
 
 import dhu.cst.zhamao.zm_tiku.R;
+import dhu.cst.zhamao.zm_tiku.object.TikuVersion;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 
@@ -38,6 +38,8 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
 
     private long mExitTime;
 
+    private long last_update = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +47,16 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
         final FloatingActionButton updateButton = findViewById(R.id.upateButton);
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
+        //如果本地题库损坏或者本地还没拉题库，则从Asset拉取题库文件
+        String file_path = getFilesDir().getAbsolutePath() + "/";
+        File fil = new File(file_path + "version.json");
+        if (!fil.exists()) {
+            ZMUtil.copyAssetsFile2Phone(this, "history.json");
+            ZMUtil.copyAssetsFile2Phone(this, "politics.json");
+            ZMUtil.copyAssetsFile2Phone(this, "maogai.json");
+            ZMUtil.copyAssetsFile2Phone(this, "makesi.json");
+            ZMUtil.copyAssetsFile2Phone(this, "version.json");
+        }
         Toolbar toolbar = findViewById(R.id.toolBar);
         toolbar.setTitle("选择题库");
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
@@ -58,18 +70,44 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
         });
 
         updateButton.setOnClickListener(new OnClickUpdateListener());
+        updateButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TikuVersion ver = ZMUtil.getTikuVersion(SelectBank.this);
+                Snackbar.make(findViewById(R.id.ConstraintLayout), "题库当前版本：" +
+                                ver.version_name,
+                        Snackbar.LENGTH_SHORT).show();
+                return true;
+            }
+        });
         (materialCardView1 = findViewById(R.id.materialCardView1)).setOnClickListener(this);
         (materialCardView2 = findViewById(R.id.materialCardView2)).setOnClickListener(this);
         (materialCardView3 = findViewById(R.id.materialCardView3)).setOnClickListener(this);
         (materialCardView4 = findViewById(R.id.materialCardView4)).setOnClickListener(this);
 
+        materialCardView1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                Snackbar.make(findViewById(R.id.ConstraintLayout), itemId, Snackbar.LENGTH_SHORT).show();
-                item.setChecked(true);
+                String item_name = item.getTitle().toString();
+                if(item_name.equals("关于")) {
+                    Intent intent = new Intent(SelectBank.this, AboutMe.class);
+                    if (android.os.Build.VERSION.SDK_INT < 26) {
+                        startActivity(intent);
+                    } else {
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                    }
+                } else {
+                    Snackbar.make(findViewById(R.id.ConstraintLayout), item.getTitle().toString(), Snackbar.LENGTH_SHORT).show();
+                    item.setChecked(true);
+                }
                 drawer.closeDrawers();
                 return true;
             }
@@ -80,6 +118,11 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
     public class OnClickUpdateListener implements View.OnClickListener {
         @Override
         public void onClick(final View v) {
+            if (last_update + 60000 >= ZMUtil.time()) {
+                Snackbar.make(findViewById(R.id.ConstraintLayout), "你更新得太频繁了！等一会儿吧！", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            last_update = ZMUtil.time();
             Animation circle_anim = AnimationUtils.loadAnimation(SelectBank.this, R.anim.rotate);
             LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
             if (isUpdateActivated) {
@@ -90,6 +133,14 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
             }
             circle_anim.setInterpolator(interpolator);
             v.startAnimation(circle_anim);  //开始动画
+            ZMUtil.checkUpdate(SelectBank.this, v, new Runnable() { //检查更新
+                @Override
+                public void run() {
+                    v.clearAnimation();
+                    isUpdateActivated = false;
+                }
+            });
+            /*
             Timer updateResourceTimer = new Timer();
             TimerTask mTimerTask = new TimerTask() {//创建一个线程来执行run方法中的代码
                 @Override
@@ -104,7 +155,7 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
                     });
                 }
             };
-            updateResourceTimer.schedule(mTimerTask, 3000);
+            updateResourceTimer.schedule(mTimerTask, 3000);*/
         }
     }
 
