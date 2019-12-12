@@ -9,11 +9,10 @@ public class JudgeResult {
     public String right_answer;
 
     public boolean is_end = false;
-    public TikuDisplaySecion next = null;
-    public String message;
+    public TikuDisplaySection next = null;
     public Map<String, String> res_message;
 
-    public JudgeResult() {
+    JudgeResult() {
         //TODO: 判题结果对象构建
     }
 }

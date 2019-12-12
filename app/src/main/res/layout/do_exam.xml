@@ -27,7 +27,7 @@
         android:id="@+id/questionView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题问题"
+        android:text=""
         android:textColor="@color/primaryTextColor"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -74,7 +74,7 @@
             android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="@color/primaryTextColor"
-            android:text="选项A选项A选项A选项A选项A选项A" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -113,7 +113,7 @@
             android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="@color/primaryTextColor"
-            android:text="选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B选项B" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -152,7 +152,7 @@
             android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="@color/primaryTextColor"
-            android:text="选项C选项C选项C选项C选项C选项C选项C" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -191,7 +191,7 @@
             android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="@color/primaryTextColor"
-            android:text="选项D选项D选项D选项D选项D选项D选项D选项D" />
+            android:text="" />
     </LinearLayout>
 
     <LinearLayout
@@ -230,7 +230,7 @@
             android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="@color/primaryTextColor"
-            android:text="选项E选项E选项E选项E选项E选项E选项E选项E" />
+            android:text="" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
