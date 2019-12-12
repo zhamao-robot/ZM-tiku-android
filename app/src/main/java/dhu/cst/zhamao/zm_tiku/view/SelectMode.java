@@ -3,12 +3,14 @@ package dhu.cst.zhamao.zm_tiku.view;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +21,10 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.Objects;
 
 import dhu.cst.zhamao.zm_tiku.R;
+import dhu.cst.zhamao.zm_tiku.object.QBSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
+import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 
 public class SelectMode extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -80,6 +84,38 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.progressText:
+                final EditText text = new EditText(this);
+                new MaterialAlertDialogBuilder(SelectMode.this)
+                        .setTitle("从指定题号开始做题")
+                        .setView(text)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 获取输入框的内容
+                                if (ZMUtil.isNumeric(text.getText().toString())) {
+                                    int s = Integer.parseInt(text.getText().toString());
+                                    if (s >= info.count || s < 0) {
+                                        Toast.makeText(SelectMode.this, "题目id必须是 0 ~ " + (info.count - 1), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        QBSection section = qb.getQBData(qb.getUserId(), qb_name);
+                                        section.current_ans = s;
+                                        section.commitChange(qb.getDB());
+                                        updatePageInfo();
+                                    }
+                                }
+
+                                //dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                dialog.dismiss();
+                            }
+                        }).show();
+                break;
             case R.id.doExamButton:
 
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
@@ -88,7 +124,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 intent.putExtra("auto_skip", autoNextSwitch.isChecked());
                 intent.putExtra("qb_mode", info.mode);
                 intent.putExtra("user_id", qb.getUserId());
-                if(((Button)v).getText().equals("重新做题")) {
+                if (((Button) v).getText().equals("重新做题")) {
                     intent.putExtra("change_mode", mode_selected);
                 }
 
@@ -118,7 +154,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                         .setPositiveButton("保存", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if(mode_selected != mode_selected_tmp) {
+                                if (mode_selected != mode_selected_tmp) {
                                     Toast.makeText(SelectMode.this, "你切换了模式，这将刷新你的做题进度！", Toast.LENGTH_LONG).show();
                                     Button btn = findViewById(R.id.doExamButton);
                                     btn.setText("重新做题");
@@ -156,7 +192,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         String progress = info.progress + " / " + info.count;
         progressText.setText(progress);
         //更新按钮
-        if(info.progress != 0) {
+        if (info.progress != 0) {
             Button btn = findViewById(R.id.doExamButton);
             btn.setText("继续做题");
         }

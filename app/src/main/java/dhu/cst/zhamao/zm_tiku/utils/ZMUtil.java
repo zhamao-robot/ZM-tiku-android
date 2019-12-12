@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.text.Editable;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class ZMUtil {
@@ -55,6 +57,11 @@ public class ZMUtil {
         return p.toString();
     }
 
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
+
     public static int px2dp(Context context, float pxValue) {
         float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
@@ -68,9 +75,9 @@ public class ZMUtil {
         normalDialog.show();
     }
 
-    public static void initUserDB(QB qb){
+    public static void initUserDB(QB qb) {
         Cursor sqlite = qb.getDB().get().rawQuery("SELECT * FROM user_data WHERE id = ?", new String[]{qb.getUserId()});
-        if(sqlite.getCount() == 0) {
+        if (sqlite.getCount() == 0) {
             Log.e("QB", "新增本地用户中");
             qb.getDB().queryQB("INSERT INTO user_data VALUES (?,?,?,?)", new String[]{
                     "7cf10d37-ee8d-437b-b2a2-7b6a4c97ab5a",

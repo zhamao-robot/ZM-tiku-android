@@ -1,6 +1,5 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
@@ -19,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.LinkedHashMap;
@@ -96,8 +96,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             section = qb.next(user_id, qb_name, shuffle);
         }
         if (section.warning == StatusCode.no_wrong_question) {
-            final AlertDialog.Builder normalDialog =
-                    new AlertDialog.Builder(DoExam.this);
+            final MaterialAlertDialogBuilder normalDialog =
+                    new MaterialAlertDialogBuilder(DoExam.this);
             normalDialog.setMessage("你还没有错题哦！");
             normalDialog.setNegativeButton("返回",
                     new DialogInterface.OnClickListener() {
