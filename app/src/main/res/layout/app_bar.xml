@@ -31,6 +31,8 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/accent"
         android:layout_gravity="bottom|end"
+        app:elevation="8dp"
+        app:borderWidth="0dp"
         app:srcCompat="@drawable/ic_autorenew_black_24dp"
         app:tint="@android:color/white"/>
 
