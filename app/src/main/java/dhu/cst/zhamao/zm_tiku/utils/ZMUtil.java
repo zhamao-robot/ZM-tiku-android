@@ -58,8 +58,12 @@ public class ZMUtil {
     }
 
     public static boolean isNumeric(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        return pattern.matcher(str).matches();
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public static int px2dp(Context context, float pxValue) {

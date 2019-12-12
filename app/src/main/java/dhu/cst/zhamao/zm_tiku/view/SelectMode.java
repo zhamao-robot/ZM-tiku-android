@@ -3,10 +3,10 @@ package dhu.cst.zhamao.zm_tiku.view;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -24,7 +24,6 @@ import dhu.cst.zhamao.zm_tiku.R;
 import dhu.cst.zhamao.zm_tiku.object.QBSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
-import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 
 public class SelectMode extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -55,7 +54,41 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_mode);
 
+        TextView progressText = findViewById(R.id.progressText);
+        progressText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final EditText text = new EditText(SelectMode.this);
+                text.setInputType(InputType.TYPE_CLASS_NUMBER);
+                new MaterialAlertDialogBuilder(SelectMode.this)
+                        .setTitle("从指定题号开始做题")
+                        .setView(text)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 获取输入框的内容
+                                int s = Integer.parseInt(text.getText().toString().trim());
+                                if (s >= info.count || s < 0) {
+                                    Toast.makeText(SelectMode.this, "题目id必须是 0 ~ " + (info.count - 1), Toast.LENGTH_LONG).show();
+                                } else {
+                                    QBSection section = qb.getQBData(qb.getUserId(), qb_name);
+                                    section.current_ans = s;
+                                    section.commitChange(qb.getDB());
+                                    updatePageInfo();
+                                }
 
+                                //dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+                return true;
+            }
+        });
         //初始化QB
         qb = new QB(this);
         qb_name = QB.getTikuName(Objects.requireNonNull(getIntent().getStringExtra("qb_name")));
@@ -85,36 +118,6 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.progressText:
-                final EditText text = new EditText(this);
-                new MaterialAlertDialogBuilder(SelectMode.this)
-                        .setTitle("从指定题号开始做题")
-                        .setView(text)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // 获取输入框的内容
-                                if (ZMUtil.isNumeric(text.getText().toString())) {
-                                    int s = Integer.parseInt(text.getText().toString());
-                                    if (s >= info.count || s < 0) {
-                                        Toast.makeText(SelectMode.this, "题目id必须是 0 ~ " + (info.count - 1), Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        QBSection section = qb.getQBData(qb.getUserId(), qb_name);
-                                        section.current_ans = s;
-                                        section.commitChange(qb.getDB());
-                                        updatePageInfo();
-                                    }
-                                }
-
-                                //dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-                                dialog.dismiss();
-                            }
-                        }).show();
                 break;
             case R.id.doExamButton:
 
