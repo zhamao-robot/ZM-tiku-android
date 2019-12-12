@@ -14,12 +14,11 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.LinkedHashMap;
@@ -218,7 +217,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 if (entry.getValue()) answer.append(entry.getKey());
             }
             if(answer.toString().equals("")) {
-                Toast.makeText(this, "请选择选项", Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.doExamLayout), "请选择至少一个选项", Snackbar.LENGTH_SHORT).show();
                 return;
             }
             JudgeResult result = qb.judge(user_id, answer.toString());

@@ -105,9 +105,12 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
                     }
                 } else {
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), item.getTitle().toString(), Snackbar.LENGTH_SHORT).show();
-                    item.setChecked(true);
+                    Snackbar.make(findViewById(R.id.ConstraintLayout), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                 }
+                /*else {
+                    Snackbar.make(findViewById(R.id.ConstraintLayout), item.getTitle().toString(), Snackbar.LENGTH_SHORT).show();
+                    //item.setChecked(true);
+                }*/
                 drawer.closeDrawers();
                 return true;
             }

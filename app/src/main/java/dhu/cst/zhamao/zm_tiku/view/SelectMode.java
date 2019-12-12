@@ -72,7 +72,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                                 // 获取输入框的内容
                                 int s = Integer.parseInt(text.getText().toString().trim());
                                 if (s >= info.count || s < 0) {
-                                    Toast.makeText(SelectMode.this, "题目id必须是 0 ~ " + (info.count - 1), Toast.LENGTH_LONG).show();
+                                    Snackbar.make(findViewById(R.id.ConstraintLayout), "题目id必须是 0 ~ " + (info.count - 1), Snackbar.LENGTH_LONG).show();
                                 } else {
                                     QBSection section = qb.getQBData(qb.getUserId(), qb_name);
                                     section.current_ans = s;
@@ -99,7 +99,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         (shuffleSwitch = findViewById(R.id.shuffleSwitch)).setOnCheckedChangeListener(this);
         (autoNextSwitch = findViewById(R.id.autoNextSwitch)).setOnCheckedChangeListener(this);
 
-        findViewById(R.id.arrowImage).setOnLongClickListener(new View.OnLongClickListener() {
+        /*findViewById(R.id.arrowImage).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(SelectMode.this, TestBank.class);
@@ -108,7 +108,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 startActivity(intent);
                 return true;
             }
-        });
+        });*/
         if (qb.getQBData(qb.getUserId(), qb_name) == null) {
             qb.insertQBData(qb.getUserId(), qb_name);
             //Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();
@@ -177,7 +177,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mode_selected != mode_selected_tmp) {
-                                    Toast.makeText(SelectMode.this, "你切换了模式，这将刷新你的做题进度！", Toast.LENGTH_LONG).show();
+                                    Snackbar.make(findViewById(R.id.ConstraintLayout), "你切换了模式，这将刷新你的做题进度！", Snackbar.LENGTH_LONG).show();
                                     Button btn = findViewById(R.id.doExamButton);
                                     btn.setText("重新做题");
                                 }
