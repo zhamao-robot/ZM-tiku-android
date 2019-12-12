@@ -1,11 +1,14 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -73,6 +76,23 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
             qb.insertQBData(qb.getUserId(), qb_name);
             Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();
         }
+
+        //设置 toolbar
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        toolbar.setTitle(QB.getTikuName(qb_name));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (android.os.Build.VERSION.SDK_INT >= 26) {
+                    finishAfterTransition();
+                } else {
+                    finish();
+                }
+            }
+        });
+
         //更新页面内容 通过 database
         updatePageInfo();
     }
@@ -99,7 +119,6 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 }
                 break;
             case R.id.selectBankButton:
-            case R.id.backImage:
                 if (android.os.Build.VERSION.SDK_INT >= 26) {
                     finishAfterTransition();
                 } else {
@@ -147,8 +166,6 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     }
 
     public void updatePageInfo() {
-        //设置Activity的标题栏为题库名称
-        ((TextView) findViewById(R.id.select_mode_name)).setText(QB.getTikuName(qb_name));
 
         info = qb.getInfo(qb.getUserId(), qb_name);
         //更新progress进度显示

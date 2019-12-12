@@ -1,5 +1,6 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
@@ -35,11 +36,10 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
-        Toolbar toolbar = findViewById(R.id.toolBar);
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
         final FloatingActionButton updateButton = findViewById(R.id.upateButton);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
+        Toolbar toolbar = findViewById(R.id.toolBar);
         toolbar.setTitle("选择题库");
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         setSupportActionBar(toolbar);
@@ -57,9 +57,10 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
         (materialCardView3 = findViewById(R.id.materialCardView3)).setOnClickListener(this);
         (materialCardView4 = findViewById(R.id.materialCardView4)).setOnClickListener(this);
 
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
             @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
                 Snackbar.make(findViewById(R.id.ConstraintLayout), itemId , Snackbar.LENGTH_SHORT).show();
                 item.setChecked(true);

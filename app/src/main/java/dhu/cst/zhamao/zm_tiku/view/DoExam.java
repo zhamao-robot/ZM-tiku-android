@@ -2,6 +2,7 @@ package dhu.cst.zhamao.zm_tiku.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -113,11 +114,20 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             normalDialog.show();
             return;
         }
-        ImageView backImage = findViewById(R.id.backImage);
-        backImage.setOnClickListener(new View.OnClickListener() {
+
+        //设置 toolbar
+        Toolbar toolbar = findViewById(R.id.toolBar);
+        toolbar.setTitle(QB.getTikuName(qb_name));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finishAfterTransition();
+                if (android.os.Build.VERSION.SDK_INT >= 26) {
+                    finishAfterTransition();
+                } else {
+                    finish();
+                }
             }
         });
 
