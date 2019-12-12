@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "",
                 "0"
         }).close();
-        Toast.makeText(context, "创建数据库中", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "创建数据库中", Toast.LENGTH_SHORT).show();
     }
 
     SQLiteDatabase get() {

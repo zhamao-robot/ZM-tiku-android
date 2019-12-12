@@ -89,7 +89,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         this.shuffle = this.getIntent().getBooleanExtra("shuffle", false);
         int qb_mode = this.getIntent().getIntExtra("qb_mode", 0);
         this.auto_skip = this.getIntent().getBooleanExtra("auto_skip", false);
-        Toast.makeText(this, "shuffle: " + this.shuffle + ", mode: " + qb_mode + ", skip: " + this.auto_skip, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "shuffle: " + this.shuffle + ", mode: " + qb_mode + ", skip: " + this.auto_skip, Toast.LENGTH_LONG).show();
         int change_mode = this.getIntent().getIntExtra("change_mode", -1);
         if (change_mode != -1) {
             section = qb.changeMode(user_id, qb_name, change_mode, shuffle);

@@ -24,6 +24,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.Objects;
 
 import dhu.cst.zhamao.zm_tiku.R;
+import dhu.cst.zhamao.zm_tiku.object.QBSection;
 import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 
@@ -110,7 +111,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         });
         if (qb.getQBData(qb.getUserId(), qb_name) == null) {
             qb.insertQBData(qb.getUserId(), qb_name);
-            Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();
+            //Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();
         }
 
         //设置 toolbar
