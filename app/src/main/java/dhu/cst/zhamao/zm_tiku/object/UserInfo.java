@@ -6,4 +6,5 @@ public class UserInfo {
     public boolean shuffle;
     public int count;
     public int progress;
+    public int doing;
 }

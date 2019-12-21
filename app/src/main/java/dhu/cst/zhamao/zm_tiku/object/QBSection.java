@@ -96,6 +96,7 @@ public class QBSection {
         JudgeResult result = new JudgeResult();
         result.status = answer.equals(da_an);//返回题目对错情况
         result.id = doing_list.get(current_ans);
+        result.list_id = current_ans;
         shuffle_list = qb.getShuffleList(user_id);
         if (shuffle_list.size() != 0) {
             String origin_key = question.key;

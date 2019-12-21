@@ -5,8 +5,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.text.InputType;
@@ -181,6 +183,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                                     Button btn = findViewById(R.id.doExamButton);
                                     btn.setText("重新做题");
                                 }
+
                                 mode_selected = mode_selected_tmp;
                                 TextView switchModeNameText = findViewById(R.id.switchModeNameText);
                                 switchModeNameText.setText(mode_list[mode_selected]);
@@ -205,14 +208,13 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     }
 
     public void updatePageInfo() {
-
         info = qb.getInfo(qb.getUserId(), qb_name);
         //更新progress进度显示
         TextView progressText = findViewById(R.id.progressText);
         String progress = info.progress + " / " + info.count;
         progressText.setText(progress);
         //更新按钮
-        if (info.progress != 0) {
+        if ((info.progress != 0 || info.doing != 0)) {
             Button btn = findViewById(R.id.doExamButton);
             btn.setText("继续做题");
         }

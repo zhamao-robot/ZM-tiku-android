@@ -142,6 +142,14 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
                     v.clearAnimation();
                     isUpdateActivated = false;
                 }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    v.clearAnimation();
+                    isUpdateActivated = false;
+                    Snackbar.make(findViewById(R.id.ConstraintLayout), "更新失败，请检查你的网络设置！", Snackbar.LENGTH_LONG).show();
+                    last_update -= 10;
+                }
             });
             /*
             Timer updateResourceTimer = new Timer();

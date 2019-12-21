@@ -1,6 +1,7 @@
 package dhu.cst.zhamao.zm_tiku.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -176,13 +177,17 @@ public class QB {
         return ls;
     }
 
-    public String getQuestionTypeCH(TikuSection q) {
+    public String getQuestionTypeCH(int id) {
         List<String> ls = Arrays.asList("单选题", "多选题", "填空题");
         try {
-            return ls.get(q.answer_type);
+            return ls.get(id);
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
+    }
+
+    public String getQuestionTypeCH(TikuSection q) {
+        return getQuestionTypeCH(q.answer_type);
     }
 
     /**
@@ -271,11 +276,12 @@ public class QB {
         JudgeResult r = section.judge(this, current_question, answer);
         Log.i("QB", "Android判题：" + user_id + "(" + section.qb_name + ") " + (r.status ? "正确" : "错误"));
         r.is_end = false;
+        boolean shuffle = !getShuffleList(user_id).isEmpty();
         int next = section.current_ans + 1;
+
+        TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
         if (next < section.doing_list.size()) {
             section.current_ans = next;
-            boolean shuffle = !getShuffleList(user_id).isEmpty();
-            TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
             if (shuffle) db.setUserShuffle(user_id, question.shuffle);
 
             TikuDisplaySection res_next = new TikuDisplaySection();
@@ -338,6 +344,7 @@ public class QB {
             db.setUserShuffle(user_id, new ArrayList<String>());
 
         TikuDisplaySection res = new TikuDisplaySection();
+        res.list_id = current_ans;
         res.question = question;
         res.id = status.doing_list.get(current_ans);
         res.type = getQuestionTypeCH(question);
@@ -373,6 +380,7 @@ public class QB {
         res.question = question;
         res.id = doing_list.get(0);
         res.type = getQuestionTypeCH(question);
+        getQBCacheEditor(qb_name).clear().apply();
         return res;
     }
 
@@ -383,5 +391,9 @@ public class QB {
         } catch (IndexOutOfBoundsException e) {
             return null;
         }
+    }
+
+    public SharedPreferences.Editor getQBCacheEditor(String qb_name) {
+        return context.getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE).edit();
     }
 }

@@ -10,6 +10,7 @@ import android.view.Display;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -198,7 +199,7 @@ public class ZMUtil {
         }
     }
 
-    public static void checkUpdate(final Activity activity, View v, final Runnable runnable){
+    public static void checkUpdate(final Activity activity, View v, final Runnable runnable, final Runnable failRunnable){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -226,11 +227,8 @@ public class ZMUtil {
                     }
                     runOnUI(activity, result.toString());
                     activity.runOnUiThread(runnable);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
+                    activity.runOnUiThread(failRunnable);
                     e.printStackTrace();
                 } finally {
                     if (reader != null) {

@@ -8,4 +8,5 @@ public class TikuDisplaySection {
     public String type;
     public int warning = StatusCode.ok;
     public String mode;
+    public int list_id;
 }
