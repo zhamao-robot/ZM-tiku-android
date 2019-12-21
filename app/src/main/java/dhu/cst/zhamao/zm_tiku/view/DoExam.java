@@ -1,5 +1,6 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textview.MaterialTextView;
@@ -30,6 +32,7 @@ import java.util.TimerTask;
 import dhu.cst.zhamao.zm_tiku.R;
 import dhu.cst.zhamao.zm_tiku.object.JudgeResult;
 import dhu.cst.zhamao.zm_tiku.object.TikuDisplaySection;
+import dhu.cst.zhamao.zm_tiku.object.UserInfo;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 import dhu.cst.zhamao.zm_tiku.value.RoundBackgroundColorSpan;
@@ -43,6 +46,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     private boolean auto_skip;
 
     private LinearLayout layout1, layout2, layout3, layout4, layout5;
+    private TextView last_question_text,current_progress_text,next_question_text;
     private TextView question_view;
 
     private Map<String, Boolean> key_down;
@@ -81,6 +85,10 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         layout5 = findViewById(R.id.answerLayout5);
         //linearLayout5.setVisibility(View.GONE);
         question_view = findViewById(R.id.questionView);
+        LinearLayout bottom_sheet_layout = findViewById(R.id.bottom_sheet_layout);
+        last_question_text = findViewById(R.id.last_question_text);
+        next_question_text = findViewById(R.id.next_question_text);
+        current_progress_text = findViewById(R.id.current_progress_text);
         bind_view = new LinkedHashMap<>();
 
         this.qb_name = this.getIntent().getStringExtra("qb_name");
@@ -127,6 +135,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
+
         updateDisplayQuestion(section);
     }
 
@@ -160,6 +170,11 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         layout5.setEnabled(true);
         setChoiceStatus(layout1, R.id.answerLayout1, false, true);
         submit_btn.setText("提交");
+
+        UserInfo info;
+        info = qb.getInfo(qb.getUserId(), qb_name);
+        String progress_text = "当前 "+info.progress+"/"+info.count;
+        current_progress_text.setText(progress_text);
 
         for (Map.Entry<String, String> entry : section.question.answer.entrySet()) {
             switch (entry.getKey()) {
