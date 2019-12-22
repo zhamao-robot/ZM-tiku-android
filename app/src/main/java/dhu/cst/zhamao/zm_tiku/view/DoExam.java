@@ -1,20 +1,27 @@
 package dhu.cst.zhamao.zm_tiku.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -69,6 +76,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     private String last_error = "";
 
     private int view_id;
+
+    private int questions_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +155,17 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
 
+        UserInfo info;
+        info = qb.getInfo(qb.getUserId(), qb_name);
+        questions_count = info.count;
+
+        // 设置答题卡
+        int[] answers = new int[questions_count];
+        RecyclerView recyclerView = findViewById(R.id.answer_sheet);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+        AnswerSheetAdapter adapter = new AnswerSheetAdapter(this, answers);
+        recyclerView.setAdapter(adapter);
+
         updateDisplayQuestion(section);
     }
 
@@ -202,6 +222,18 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         submit_btn.setText(btn_text);
         current_progress_text.setText(progress_text);
         setChoiceStatus(layout1, R.id.answerLayout1, false, true);
+
+
+        current_progress_text.post(new Runnable() {
+            @Override
+            public void run() {
+                LayerDrawable ld = (LayerDrawable) getResources().getDrawable(R.drawable.bottom_sheet_background);
+                int widthPixels = current_progress_text.getMeasuredWidth();
+                int right = (int)(widthPixels * (1 - section.list_id/(double)questions_count));
+                ld.setLayerInset(1,0,0,right,0);
+                findViewById(R.id.current_progress_text).setBackground(ld);
+            }
+        });
 
         for (Map.Entry<String, String> entry : answer_list.entrySet()) {
             switch (entry.getKey()) {
@@ -365,8 +397,12 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             layout3.setEnabled(false);
             layout4.setEnabled(false);
             layout5.setEnabled(false);
-            if (result.is_end) {
-                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener() {
+
+            RecyclerView recyclerView = findViewById(R.id.answer_sheet);
+            ((AnswerSheetAdapter)recyclerView.getAdapter()).setItem(section.list_id,result.status?2:1);
+
+            if(result.is_end) {
+                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finishAfterTransition();
@@ -415,6 +451,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     public void onChoiceClick(LinearLayout view, int id) {
         try {
             String ans = bind_ans.get(id);
+            //Log.e("DoExam", "Choice Clicked: " + ans);
             Boolean key_stat = key_down.get(ans);
             if (key_stat == null) throw new NullPointerException("Null Pointer");
             setChoiceStatus(view, id, !key_stat, section.question.answer_type == 0);
@@ -443,6 +480,80 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         cur = (MaterialTextView) view.getChildAt(0);
         setAnswerColor(cur, status ? R.color.white : R.color.primary, status ? R.drawable.circle_solid : R.drawable.circle);
         qb.pass();
+    }
+
+    class AnswerSheetAdapter extends RecyclerView.Adapter<AnswerSheetAdapter.ViewHolder> {
+
+        private int[] mData;
+        private LayoutInflater mInflater;
+
+        AnswerSheetAdapter(Context context, int[] data) {
+            this.mInflater = LayoutInflater.from(context);
+            this.mData = data;
+        }
+
+        @Override
+        @NonNull
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = mInflater.inflate(R.layout.answer_sheet_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        // binds the data to the TextView in each cell
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            holder.myTextView.setText(String.valueOf(position+1));
+            if(mData[position] == 1){ // 错误
+                holder.myTextView.setTextColor(getResources().getColor(R.color.white));
+                holder.myTextView.setBackground(getDrawable(R.drawable.circle_red));
+            }else if(mData[position] == 2){
+                holder.myTextView.setTextColor(getResources().getColor(R.color.white));
+                holder.myTextView.setBackground(getDrawable(R.drawable.circle_green));
+            }else{
+                holder.myTextView.setTextColor(getResources().getColor(R.color.primary_text));
+                holder.myTextView.setBackground(getDrawable(R.drawable.circle));
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mData.length;
+        }
+
+
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView myTextView;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                myTextView = itemView.findViewById(R.id.info_text);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            }
+        }
+
+        int getItem(int position) {
+            return mData[position];
+        }
+        void setItem(int position,int value){
+            mData[position] = value;
+            this.notifyItemChanged(position);
+        }
+/*
+        // allows clicks events to be caught
+        void setClickListener(ItemClickListener itemClickListener) {
+            this.mClickListener = itemClickListener;
+        }
+
+        // parent activity will implement this method to respond to click events
+        public interface ItemClickListener {
+            void onItemClick(View view, int position);
+        }
+ */
     }
 
     private void showNext(String user_id, String qb_name, boolean shuffle) {

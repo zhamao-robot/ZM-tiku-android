@@ -5,59 +5,76 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@color/white"
     app:behavior_hideable="false"
     app:behavior_peekHeight="56dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
+        android:id="@+id/bottom_sheet_banner"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/primary"
         android:orientation="horizontal"
         >
         <TextView
             android:id="@+id/last_question_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textColor="@color/white"
             android:layout_gravity="center"
-            android:gravity="start"
+            android:background="@color/primary"
+            android:gravity="start|center"
             android:layout_weight="1"
             android:onClick="onClick"
-            android:layout_marginStart="16dp"
+            android:paddingStart="16dp"
             android:text="上一题"
             android:textSize="16sp" />
         <TextView
             android:id="@+id/current_progress_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:background="@drawable/bottom_sheet_background"
             android:gravity="center"
             android:textColor="@color/white"
-            android:layout_weight="1"
+            android:layout_weight="10"
             android:text="当前"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/next_question_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_height="match_parent"
+            android:paddingEnd="16dp"
             android:layout_gravity="center"
-            android:gravity="end"
+            android:background="@color/primary"
+            android:gravity="end|center"
             android:layout_weight="1"
             android:onClick="onClick"
             android:text="反馈"
             android:textColor="@color/white"
             android:textSize="16sp" />
+
     </LinearLayout>
 
-    <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:layout_marginTop="16dp"
-    android:text="答题卡"
-    android:textSize="20sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="540dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/primaryTextColor"
+            android:text="答题卡"
+            android:textSize="20sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/answer_sheet"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 
 </LinearLayout>
