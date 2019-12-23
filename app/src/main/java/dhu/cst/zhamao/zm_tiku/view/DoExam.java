@@ -154,6 +154,21 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         });
 
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
+        final View background_mask = findViewById(R.id.background_mask);
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED)
+                    background_mask.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                background_mask.setVisibility(View.VISIBLE);
+                background_mask.setAlpha(slideOffset);
+                findViewById(R.id.doExamLayout).set
+            }
+        });
 
         UserInfo info;
         info = qb.getInfo(qb.getUserId(), qb_name);
@@ -228,10 +243,10 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void run() {
                 LayerDrawable ld = (LayerDrawable) getResources().getDrawable(R.drawable.bottom_sheet_background);
-                int widthPixels = current_progress_text.getMeasuredWidth();
+                int widthPixels = findViewById(R.id.bottom_sheet_banner).getMeasuredWidth();
                 int right = (int)(widthPixels * (1 - section.list_id/(double)questions_count));
                 ld.setLayerInset(1,0,0,right,0);
-                findViewById(R.id.current_progress_text).setBackground(ld);
+                findViewById(R.id.bottom_sheet_banner).setBackground(ld);
             }
         });
 

@@ -23,6 +23,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <View
+        android:id="@+id/background_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#99000000"
+        />
     <include layout="@layout/do_exam_main" />
     <include layout="@layout/do_exam_bottom" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
