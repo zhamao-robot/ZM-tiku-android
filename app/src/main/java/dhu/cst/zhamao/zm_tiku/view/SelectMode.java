@@ -101,7 +101,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         (shuffleSwitch = findViewById(R.id.shuffleSwitch)).setOnCheckedChangeListener(this);
         (autoNextSwitch = findViewById(R.id.autoNextSwitch)).setOnCheckedChangeListener(this);
 
-        /*findViewById(R.id.arrowImage).setOnLongClickListener(new View.OnLongClickListener() {
+        findViewById(R.id.arrowImage).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(SelectMode.this, TestBank.class);
@@ -110,7 +110,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 startActivity(intent);
                 return true;
             }
-        });*/
+        });
         if (qb.getQBData(qb.getUserId(), qb_name) == null) {
             qb.insertQBData(qb.getUserId(), qb_name);
             //Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();

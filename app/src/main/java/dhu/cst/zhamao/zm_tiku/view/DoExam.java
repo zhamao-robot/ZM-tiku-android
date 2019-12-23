@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -57,26 +58,20 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     private boolean shuffle;
     private boolean auto_skip;
 
-    private LinearLayout layout1, layout2, layout3, layout4, layout5;
+    private LinearLayout layout1, layout2, layout3, layout4, layout5, bottom_sheet_layout;
     private TextView last_question_text, current_progress_text, next_question_text;
     private TextView question_view;
+    private RecyclerView answer_sheet;
 
     private Map<String, Boolean> key_down;
-
     private QB qb;
-
     private Map<String, TextView> bind_view;
-
     private Map<Integer, String> bind_ans;
-
     private Button submit_btn;
-
     private TikuDisplaySection section;
-
     private String last_error = "";
 
     private int view_id;
-
     private int questions_count;
 
     @Override
@@ -103,10 +98,11 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         layout5 = findViewById(R.id.answerLayout5);
         //linearLayout5.setVisibility(View.GONE);
         question_view = findViewById(R.id.questionView);
-        LinearLayout bottom_sheet_layout = findViewById(R.id.bottom_sheet_layout);
+        bottom_sheet_layout = findViewById(R.id.bottom_sheet_layout);
         last_question_text = findViewById(R.id.last_question_text);
         next_question_text = findViewById(R.id.next_question_text);
         current_progress_text = findViewById(R.id.current_progress_text);
+        answer_sheet = findViewById(R.id.answer_sheet);
         bind_view = new LinkedHashMap<>();
 
         this.qb_name = this.getIntent().getStringExtra("qb_name");
@@ -153,7 +149,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
+        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
         final View background_mask = findViewById(R.id.background_mask);
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -166,7 +162,15 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 background_mask.setVisibility(View.VISIBLE);
                 background_mask.setAlpha(slideOffset);
-                findViewById(R.id.doExamLayout).set
+            }
+        });
+
+        current_progress_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED)
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                else bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
@@ -176,10 +180,19 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
         // 设置答题卡
         int[] answers = new int[questions_count];
-        RecyclerView recyclerView = findViewById(R.id.answer_sheet);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 5));
+        QBSection qbSection = new QBSection(qb, qb.getUserId(), qb_name);
+        int i;
+        for(i = 0;i < qbSection.current_ans;i++){
+            int doing = qbSection.doing_list.get(i);
+            if(qbSection.wrong.indexOf(doing) >= 0){
+                answers[i] = 1;
+            }else{
+                answers[i] = 2;
+            }
+        }
+        answer_sheet.setLayoutManager(new GridLayoutManager(this, 5));
         AnswerSheetAdapter adapter = new AnswerSheetAdapter(this, answers);
-        recyclerView.setAdapter(adapter);
+        answer_sheet.setAdapter(adapter);
 
         updateDisplayQuestion(section);
     }
@@ -413,8 +426,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             layout4.setEnabled(false);
             layout5.setEnabled(false);
 
-            RecyclerView recyclerView = findViewById(R.id.answer_sheet);
-            ((AnswerSheetAdapter)recyclerView.getAdapter()).setItem(section.list_id,result.status?2:1);
+            ((AnswerSheetAdapter)answer_sheet.getAdapter()).setItem(section.list_id,result.status?2:1);
 
             if(result.is_end) {
                 ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener(){
@@ -521,7 +533,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             if(mData[position] == 1){ // 错误
                 holder.myTextView.setTextColor(getResources().getColor(R.color.white));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle_red));
-            }else if(mData[position] == 2){
+            }else if(mData[position] == 2){ // 正确
                 holder.myTextView.setTextColor(getResources().getColor(R.color.white));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle_green));
             }else{
@@ -547,7 +559,27 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
             @Override
             public void onClick(View view) {
-                //if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+                int position = Integer.valueOf(myTextView.getText().toString()) - 1;
+                if(mData[position] != 0){
+                    SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+                    String json = p.getString(Integer.toString(position), "");
+                    if (json.equals(""))
+                        Snackbar.make(findViewById(R.id.doExamLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
+                    else {
+                        try {
+                            Gson gson = new Gson();
+                            QBCacheSection section = gson.fromJson(json, QBCacheSection.class);
+                            submit_btn.setText("回到当前");
+                            next_question_text.setText("下一题");
+                            updateLastDisplayQuestion(section);
+                        } catch (JsonSyntaxException e) {
+                            Snackbar.make(findViewById(R.id.doExamLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
+                            last_error = e.getMessage() + "\n缓存的json：" + json;
+                        }
+                    }
+                    BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
             }
         }
 
@@ -558,17 +590,6 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             mData[position] = value;
             this.notifyItemChanged(position);
         }
-/*
-        // allows clicks events to be caught
-        void setClickListener(ItemClickListener itemClickListener) {
-            this.mClickListener = itemClickListener;
-        }
-
-        // parent activity will implement this method to respond to click events
-        public interface ItemClickListener {
-            void onItemClick(View view, int position);
-        }
- */
     }
 
     private void showNext(String user_id, String qb_name, boolean shuffle) {
