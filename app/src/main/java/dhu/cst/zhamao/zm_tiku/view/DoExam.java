@@ -12,13 +12,12 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.text.Layout;
+
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +26,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -192,14 +190,21 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         int[] answers = new int[questions_count];
         QBSection qbSection = new QBSection(qb, qb.getUserId(), qb_name);
         int i;
-        for(i = 0;i < qbSection.current_ans;i++){
+        Gson gson = new Gson();
+        SharedPreferences pref = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+        for(Map.Entry<String, ?> entry : pref.getAll().entrySet()) {
+            QBCacheSection section = gson.fromJson((String) entry.getValue(), QBCacheSection.class);
+            answers[Integer.parseInt(entry.getKey())] = section.real_choice.equals(section.user_choice) ? 2 : 1;
+        }
+
+        /*for(i = 0;i < qbSection.current_ans;i++){
             int doing = qbSection.doing_list.get(i);
             if(qbSection.wrong.indexOf(doing) >= 0){
                 answers[i] = 1;
             }else{
                 answers[i] = 2;
             }
-        }
+        }*/
         answer_sheet.setLayoutManager(new GridLayoutManager(this, 5));
         AnswerSheetAdapter adapter = new AnswerSheetAdapter(this, answers);
         answer_sheet.setAdapter(adapter);
@@ -601,11 +606,6 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             mData[position] = value;
             this.notifyItemChanged(position);
         }
-    }
-
-    private void showNext(String user_id, String qb_name, boolean shuffle) {
-        section = qb.next(user_id, qb_name, shuffle);
-        updateDisplayQuestion(section);
     }
 
     /**
