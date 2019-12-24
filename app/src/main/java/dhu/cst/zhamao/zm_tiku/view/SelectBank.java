@@ -17,8 +17,10 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -30,14 +32,10 @@ import dhu.cst.zhamao.zm_tiku.object.TikuVersion;
 import dhu.cst.zhamao.zm_tiku.utils.QB;
 import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 
-public class SelectBank extends AppCompatActivity implements View.OnClickListener {
-
-    MaterialCardView materialCardView1, materialCardView2, materialCardView3, materialCardView4;
+public class SelectBank extends AppCompatActivity {
 
     boolean isUpdateActivated = false;
-
     private long mExitTime;
-
     private long last_update = 0;
 
     @Override
@@ -57,6 +55,7 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
             ZMUtil.copyAssetsFile2Phone(this, "makesi.json");
             ZMUtil.copyAssetsFile2Phone(this, "version.json");
         }
+
         Toolbar toolbar = findViewById(R.id.toolBar);
         toolbar.setTitle("选择题库");
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
@@ -69,30 +68,24 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
             }
         });
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        final SelectBankFragment fragment = new SelectBankFragment();
+        fragmentTransaction.add(R.id.fragment_container, fragment,"main");
+        fragmentTransaction.commit();
+
         updateButton.setOnClickListener(new OnClickUpdateListener());
         updateButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 TikuVersion ver = ZMUtil.getTikuVersion(SelectBank.this);
-                Snackbar.make(findViewById(R.id.ConstraintLayout), "题库当前版本：" +
-                                ver.version_name,
-                        Snackbar.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-        (materialCardView1 = findViewById(R.id.materialCardView1)).setOnClickListener(this);
-        (materialCardView2 = findViewById(R.id.materialCardView2)).setOnClickListener(this);
-        (materialCardView3 = findViewById(R.id.materialCardView3)).setOnClickListener(this);
-        (materialCardView4 = findViewById(R.id.materialCardView4)).setOnClickListener(this);
-
-        materialCardView1.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+                Snackbar.make(findViewById(R.id.ConstraintLayout), "题库当前版本：" + ver.version_name,Snackbar.LENGTH_SHORT).show();
                 return true;
             }
         });
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_do_exam);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -104,13 +97,27 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
                     } else {
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
                     }
+                }else if(item_name.equals("开始练习")){
+                    item.setChecked(true);
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if(!(fragmentManager.findFragmentByTag("main") instanceof SelectBankFragment)){
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        SelectBankFragment fragment = new SelectBankFragment();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
+                        fragmentTransaction.commit();
+                    }
+                }else if(item_name.equals("查看错题本")){
+                    item.setChecked(true);
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if(!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)){
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        BookmarkFragment fragment = new BookmarkFragment();
+                        fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
+                        fragmentTransaction.commit();
+                    }
                 } else {
                     Snackbar.make(findViewById(R.id.ConstraintLayout), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                 }
-                /*else {
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), item.getTitle().toString(), Snackbar.LENGTH_SHORT).show();
-                    //item.setChecked(true);
-                }*/
                 drawer.closeDrawers();
                 return true;
             }
@@ -151,48 +158,6 @@ public class SelectBank extends AppCompatActivity implements View.OnClickListene
                     last_update -= 10;
                 }
             });
-            /*
-            Timer updateResourceTimer = new Timer();
-            TimerTask mTimerTask = new TimerTask() {//创建一个线程来执行run方法中的代码
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            v.clearAnimation();
-                            Snackbar.make(findViewById(R.id.ConstraintLayout), "成功更新题库！", Snackbar.LENGTH_SHORT).show();
-                            isUpdateActivated = false;
-                        }
-                    });
-                }
-            };
-            updateResourceTimer.schedule(mTimerTask, 3000);*/
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        String qb_name = "";
-        switch (v.getId()) {
-            case R.id.materialCardView1:
-                qb_name = "近代史题库";
-                break;
-            case R.id.materialCardView2:
-                qb_name = "马克思题库";
-                break;
-            case R.id.materialCardView3:
-                qb_name = "毛概题库";
-                break;
-            case R.id.materialCardView4:
-                qb_name = "思修题库";
-                break;
-        }
-        Intent intent = new Intent(SelectBank.this, SelectMode.class);
-        intent.putExtra("qb_name", qb_name);
-        if (android.os.Build.VERSION.SDK_INT < 26) {
-            startActivity(intent);
-        } else {
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
         }
     }
 
