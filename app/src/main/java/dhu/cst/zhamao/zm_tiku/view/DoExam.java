@@ -20,6 +20,7 @@ import android.text.style.RelativeSizeSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -151,6 +152,12 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
         final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
         final View background_mask = findViewById(R.id.background_mask);
+        background_mask.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -161,6 +168,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
                 background_mask.setVisibility(View.VISIBLE);
+                background_mask.bringToFront();
                 background_mask.setAlpha(slideOffset);
             }
         });
