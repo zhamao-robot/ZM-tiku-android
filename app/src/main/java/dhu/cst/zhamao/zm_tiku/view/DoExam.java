@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 
+import android.speech.tts.TextToSpeech;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 
@@ -28,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -37,6 +39,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
@@ -53,7 +56,7 @@ import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 import dhu.cst.zhamao.zm_tiku.value.RoundBackgroundColorSpan;
 import dhu.cst.zhamao.zm_tiku.value.StatusCode;
 
-public class DoExam extends AppCompatActivity implements View.OnClickListener {
+public class DoExam extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private String qb_name;
     private String user_id;
@@ -75,6 +78,54 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
     private int view_id;
     private int questions_count;
+    private TextToSpeech tts = null;
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch(v.getId()) {
+            case R.id.answerLayout1:
+            case R.id.answerLayout2:
+            case R.id.answerLayout3:
+            case R.id.answerLayout4:
+            case R.id.answerLayout5:
+                if(tts == null) {
+                    Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "TTS文本转语音系统库未找到！", Snackbar.LENGTH_LONG).show();
+                } else {
+                    LinearLayout layout = (LinearLayout) v;
+                    TextView text = (TextView) layout.getChildAt(1);
+                    tts.speak(text.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, "");
+                    Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "正在朗读选项", Snackbar.LENGTH_SHORT).show();
+                }
+                return true;
+        }
+        return false;
+    }
+
+    private class TTSListener implements TextToSpeech.OnInitListener {
+        @Override
+        public void onInit(int status) {
+            // TODO Auto-generated method stub
+            if (status == TextToSpeech.SUCCESS) {
+                int result = tts.setLanguage(Locale.CHINA);
+                if (result == TextToSpeech.LANG_MISSING_DATA
+                        || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                    Toast.makeText(DoExam.this,"数据丢失或不支持",Toast.LENGTH_SHORT).show();
+                    tts = null;
+                }
+//                int supported = mSpeech.setLanguage(Locale.US);
+//                if ((supported != TextToSpeech.LANG_AVAILABLE) && (supported != TextToSpeech.LANG_COUNTRY_AVAILABLE)) {
+//                    Toast.makeText(MainActivity.this, "不支持当前语言！", Toast.LENGTH_SHORT).show();
+//                    Log.i(TAG, "onInit: 支持当前选择语言");
+//                }else{
+//
+//                }
+                Log.e("TTS", "onInit: TTS引擎初始化成功");
+            }
+            else{
+                Log.e("TTS", "onInit: TTS引擎初始化失败");
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +139,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         bind_ans.put(R.id.answerLayout4, "D");
         bind_ans.put(R.id.answerLayout5, "E");
 
+
         submit_btn = findViewById(R.id.submitButton);
 
         qb = new QB(this);
@@ -98,6 +150,22 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         layout3 = findViewById(R.id.answerLayout3);
         layout4 = findViewById(R.id.answerLayout4);
         layout5 = findViewById(R.id.answerLayout5);
+
+        layout1.setOnLongClickListener(this);
+        layout2.setOnLongClickListener(this);
+        layout3.setOnLongClickListener(this);
+        layout4.setOnLongClickListener(this);
+        layout5.setOnLongClickListener(this);
+
+        TextView answerText1 = findViewById(R.id.answerText1);
+        answerText1.getText().toString();
+
+        TextToSpeech mSpeech = new TextToSpeech(this, new TTSListener());
+        tts = mSpeech;
+        mSpeech.setSpeechRate(0.5f);
+        mSpeech.setPitch(1.0f);
+        mSpeech.setLanguage(Locale.CHINESE);
+
         //linearLayout5.setVisibility(View.GONE);
         question_view = findViewById(R.id.questionView);
         bottom_sheet_layout = findViewById(R.id.bottom_sheet_layout);

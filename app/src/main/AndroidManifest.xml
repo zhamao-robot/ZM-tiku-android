@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.Feedback"></activity>
+        <activity android:name=".view.Feedback" />
         <activity
             android:name=".view.SplashActivity"
             android:screenOrientation="portrait">

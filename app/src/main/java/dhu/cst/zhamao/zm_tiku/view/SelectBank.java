@@ -22,7 +22,6 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -32,7 +31,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
-import java.io.Console;
 import java.io.File;
 
 import dhu.cst.zhamao.zm_tiku.R;
@@ -78,7 +76,7 @@ public class SelectBank extends AppCompatActivity {
                             .getPackageManager()
                             .getPackageInfo(this.getPackageName(), 0);
                     //Snackbar.make(findViewById(R.id.fragment_container), pref.getString("current_version", "0.1"), Snackbar.LENGTH_LONG).show();
-                    if(!pref.getString("current_version", "0.1").equals(packageInfo.versionName)) {
+                    if (!pref.getString("current_version", "0.1").equals(packageInfo.versionName)) {
                         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                         builder.setTitle("检测到题库App中题库有更新");
                         builder.setMessage("原来的题库版本是 " + ver.version_name + "，新版题库版本是 " + ass_ver.version_name + "，是否更新内置题库？更新题库将重置所有的做题进度且无法恢复！");
@@ -139,7 +137,7 @@ public class SelectBank extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         final SelectBankFragment fragment = new SelectBankFragment();
-        fragmentTransaction.add(R.id.fragment_container, fragment,"main");
+        fragmentTransaction.add(R.id.fragment_container, fragment, "main");
         fragmentTransaction.commit();
 
         updateButton.setOnClickListener(new OnClickUpdateListener());
@@ -147,7 +145,7 @@ public class SelectBank extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 TikuVersion ver = ZMUtil.getTikuVersion(SelectBank.this);
-                Snackbar.make(findViewById(R.id.ConstraintLayout), "题库当前版本：" + ver.version_name,Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.ConstraintLayout), "题库当前版本：" + ver.version_name, Snackbar.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -165,27 +163,27 @@ public class SelectBank extends AppCompatActivity {
                     } else {
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
                     }
-                }else if(item_name.equals("开始练习")){
+                } else if (item_name.equals("开始练习")) {
                     item.setChecked(true);
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    if(!(fragmentManager.findFragmentByTag("main") instanceof SelectBankFragment)){
+                    if (!(fragmentManager.findFragmentByTag("main") instanceof SelectBankFragment)) {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SelectBankFragment fragment = new SelectBankFragment();
-                        fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
+                        fragmentTransaction.replace(R.id.fragment_container, fragment, "main");
                         fragmentTransaction.commit();
                         updateButton.show();
                     }
-                }else if(item_name.equals("查看错题本")){
+                } else if (item_name.equals("查看错题本")) {
                     item.setChecked(true);
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    if(!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)){
+                    if (!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)) {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         BookmarkFragment fragment = new BookmarkFragment();
-                        fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
+                        fragmentTransaction.replace(R.id.fragment_container, fragment, "main");
                         fragmentTransaction.commit();
                         updateButton.hide();
                     }
-                } else if(item_name.equals("反馈")) {
+                } else if (item_name.equals("反馈")) {
                     Intent intent = new Intent(SelectBank.this, Feedback.class);
                     intent.putExtra("tiku_version", ZMUtil.getTikuVersion(SelectBank.this).version_name);
                     if (android.os.Build.VERSION.SDK_INT < 26) {
@@ -193,7 +191,7 @@ public class SelectBank extends AppCompatActivity {
                     } else {
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
                     }
-                }else {
+                } else {
                     Snackbar.make(findViewById(R.id.ConstraintLayout), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                 }
                 drawer.closeDrawers();
