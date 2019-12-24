@@ -95,7 +95,7 @@ public class QB {
         return sorted.toUpperCase();
     }
 
-    private Map<String, TikuSection> getTikuData(String qb_name) {
+    public Map<String, TikuSection> getTikuData(String qb_name) {
         Map<String, TikuSection> list = new LinkedHashMap<>();
         Gson gson = new Gson();
         String tiku_data = ZMUtil.loadResource(context, "tiku/" + qb_name + ".json");
