@@ -40,7 +40,6 @@ public class BookmarkFragment extends Fragment {
         bookmarks_sheet.setAdapter(adapter);
         return view;
     }
-
 }
 class BookmarksSheetAdapter extends RecyclerView.Adapter<BookmarksSheetAdapter.ViewHolder> {
 

@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 
@@ -466,6 +467,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             }
         } else if (submit_btn.getText().equals("下一题") || submit_btn.getText().equals("回到当前")) {
             updateDisplayQuestion(qb.next(user_id, qb_name, shuffle));
+            next_question_text.setText("反馈");
         }
     }
 
