@@ -54,6 +54,7 @@ public class BookmarkFragment extends Fragment {
         Map<String, TikuSection> tikuData =  qb.getTikuData(QB.getTikuName("近代史题库"));
         QBSection qbSection = new QBSection(qb, qb.getUserId(), QB.getTikuName("近代史题库"));
         List<Integer> wrong_list = qbSection.wrong;
+        if(qbSection.wrong == null) return new ArrayList<>(0);
         List<BookmarkData> res = new ArrayList<>(wrong_list.size());
         for(int i = 0;i < wrong_list.size();i++){
             int id = wrong_list.get(i);

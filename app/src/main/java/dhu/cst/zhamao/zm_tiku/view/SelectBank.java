@@ -88,7 +88,7 @@ public class SelectBank extends AppCompatActivity {
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "maogai.json");
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "makesi.json");
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "version.json");
-                                Snackbar.make(findViewById(R.id.ConstraintLayout), "成功更新题库到 " + ass_ver.version_name + " !", Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(findViewById(R.id.fragment_container), "成功更新题库到 " + ass_ver.version_name + " !", Snackbar.LENGTH_LONG).show();
                                 SharedPreferences.Editor editor = getSharedPreferences("qb_update", Context.MODE_PRIVATE).edit();
                                 editor.putString("current_version", packageInfo.versionName);
                                 editor.apply();
@@ -145,7 +145,7 @@ public class SelectBank extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 TikuVersion ver = ZMUtil.getTikuVersion(SelectBank.this);
-                Snackbar.make(findViewById(R.id.ConstraintLayout), "题库当前版本：" + ver.version_name, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.fragment_container), "题库当前版本：" + ver.version_name, Snackbar.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -175,6 +175,7 @@ public class SelectBank extends AppCompatActivity {
                     }
                 } else if (item_name.equals("查看错题本")) {
                     item.setChecked(true);
+
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     if (!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)) {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -192,7 +193,7 @@ public class SelectBank extends AppCompatActivity {
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
                     }
                 } else {
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.fragment_container), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                 }
                 drawer.closeDrawers();
                 return true;
@@ -205,14 +206,14 @@ public class SelectBank extends AppCompatActivity {
         @Override
         public void onClick(final View v) {
             if (last_update + 60000 >= ZMUtil.time()) {
-                //Snackbar.make(findViewById(R.id.ConstraintLayout), "你更新得太频繁了！等一会儿吧！", Snackbar.LENGTH_SHORT).show();
+                //Snackbar.make(findViewById(R.id.fragment_container), "你更新得太频繁了！等一会儿吧！", Snackbar.LENGTH_SHORT).show();
                 //return;
             }
             last_update = ZMUtil.time();
             Animation circle_anim = AnimationUtils.loadAnimation(SelectBank.this, R.anim.rotate);
             LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
             if (isUpdateActivated) {
-                Snackbar.make(findViewById(R.id.ConstraintLayout), "已经在更新了！", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.fragment_container), "已经在更新了！", Snackbar.LENGTH_SHORT).show();
                 return;
             } else {
                 isUpdateActivated = true;
@@ -230,7 +231,7 @@ public class SelectBank extends AppCompatActivity {
                 public void run() {
                     v.clearAnimation();
                     isUpdateActivated = false;
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "更新失败，请检查你的网络设置！", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.fragment_container), "更新失败，请检查你的网络设置！", Snackbar.LENGTH_LONG).show();
                     last_update -= 10;
                 }
             });
