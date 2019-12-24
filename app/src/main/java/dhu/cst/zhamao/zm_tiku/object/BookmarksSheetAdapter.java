@@ -74,6 +74,7 @@ public class BookmarksSheetAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         @Override
         public void onExpandChildren(BookmarkData bean) {
             int position = bean.childPosition;
+            if(position == 0)return;
             BookmarkData children = new BookmarkData(bean.tikuData,1);
             mData.add(position, children);
             notifyDataSetChanged();
