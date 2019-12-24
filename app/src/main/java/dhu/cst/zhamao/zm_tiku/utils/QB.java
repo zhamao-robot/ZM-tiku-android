@@ -98,7 +98,9 @@ public class QB {
     public Map<String, TikuSection> getTikuData(String qb_name) {
         Map<String, TikuSection> list = new LinkedHashMap<>();
         Gson gson = new Gson();
-        String tiku_data = ZMUtil.loadResource(context, "tiku/" + qb_name + ".json");
+        String tiku_data = ZMUtil.loadInternalFile(context,  qb_name + ".json");
+        System.out.println("Getting " + qb_name);
+        //System.out.print(tiku_data);
         JsonObject obj = (JsonObject) (new JsonParser()).parse(tiku_data);
         for (Map.Entry<String, JsonElement> map : obj.entrySet()) {
             JsonElement element = map.getValue();
@@ -279,9 +281,10 @@ public class QB {
         boolean shuffle = !getShuffleList(user_id).isEmpty();
         int next = section.current_ans + 1;
 
-        TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
         if (next < section.doing_list.size()) {
             section.current_ans = next;
+            TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
+
             if (shuffle) db.setUserShuffle(user_id, question.shuffle);
 
             TikuDisplaySection res_next = new TikuDisplaySection();

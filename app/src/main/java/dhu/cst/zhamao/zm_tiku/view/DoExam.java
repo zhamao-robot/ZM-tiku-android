@@ -6,18 +6,21 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+
+import android.speech.tts.TextToSpeech;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,6 +39,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
@@ -52,7 +56,7 @@ import dhu.cst.zhamao.zm_tiku.utils.ZMUtil;
 import dhu.cst.zhamao.zm_tiku.value.RoundBackgroundColorSpan;
 import dhu.cst.zhamao.zm_tiku.value.StatusCode;
 
-public class DoExam extends AppCompatActivity implements View.OnClickListener {
+public class DoExam extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private String qb_name;
     private String user_id;
@@ -74,6 +78,54 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
 
     private int view_id;
     private int questions_count;
+    private TextToSpeech tts = null;
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch(v.getId()) {
+            case R.id.answerLayout1:
+            case R.id.answerLayout2:
+            case R.id.answerLayout3:
+            case R.id.answerLayout4:
+            case R.id.answerLayout5:
+                if(tts == null) {
+                    Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "TTS文本转语音系统库未找到！", Snackbar.LENGTH_LONG).show();
+                } else {
+                    LinearLayout layout = (LinearLayout) v;
+                    TextView text = (TextView) layout.getChildAt(1);
+                    tts.speak(text.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, "");
+                    Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "正在朗读选项", Snackbar.LENGTH_SHORT).show();
+                }
+                return true;
+        }
+        return false;
+    }
+
+    private class TTSListener implements TextToSpeech.OnInitListener {
+        @Override
+        public void onInit(int status) {
+            // TODO Auto-generated method stub
+            if (status == TextToSpeech.SUCCESS) {
+                int result = tts.setLanguage(Locale.CHINA);
+                if (result == TextToSpeech.LANG_MISSING_DATA
+                        || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                    Toast.makeText(DoExam.this,"数据丢失或不支持",Toast.LENGTH_SHORT).show();
+                    tts = null;
+                }
+//                int supported = mSpeech.setLanguage(Locale.US);
+//                if ((supported != TextToSpeech.LANG_AVAILABLE) && (supported != TextToSpeech.LANG_COUNTRY_AVAILABLE)) {
+//                    Toast.makeText(MainActivity.this, "不支持当前语言！", Toast.LENGTH_SHORT).show();
+//                    Log.i(TAG, "onInit: 支持当前选择语言");
+//                }else{
+//
+//                }
+                Log.e("TTS", "onInit: TTS引擎初始化成功");
+            }
+            else{
+                Log.e("TTS", "onInit: TTS引擎初始化失败");
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +139,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         bind_ans.put(R.id.answerLayout4, "D");
         bind_ans.put(R.id.answerLayout5, "E");
 
+
         submit_btn = findViewById(R.id.submitButton);
 
         qb = new QB(this);
@@ -97,6 +150,22 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         layout3 = findViewById(R.id.answerLayout3);
         layout4 = findViewById(R.id.answerLayout4);
         layout5 = findViewById(R.id.answerLayout5);
+
+        layout1.setOnLongClickListener(this);
+        layout2.setOnLongClickListener(this);
+        layout3.setOnLongClickListener(this);
+        layout4.setOnLongClickListener(this);
+        layout5.setOnLongClickListener(this);
+
+        TextView answerText1 = findViewById(R.id.answerText1);
+        answerText1.getText().toString();
+
+        TextToSpeech mSpeech = new TextToSpeech(this, new TTSListener());
+        tts = mSpeech;
+        mSpeech.setSpeechRate(0.5f);
+        mSpeech.setPitch(1.0f);
+        mSpeech.setLanguage(Locale.CHINESE);
+
         //linearLayout5.setVisibility(View.GONE);
         question_view = findViewById(R.id.questionView);
         bottom_sheet_layout = findViewById(R.id.bottom_sheet_layout);
@@ -177,8 +246,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         current_progress_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED)
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED)
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 else bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -191,14 +260,21 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         int[] answers = new int[questions_count];
         QBSection qbSection = new QBSection(qb, qb.getUserId(), qb_name);
         int i;
-        for(i = 0;i < qbSection.current_ans;i++){
+        Gson gson = new Gson();
+        SharedPreferences pref = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+        for (Map.Entry<String, ?> entry : pref.getAll().entrySet()) {
+            QBCacheSection section = gson.fromJson((String) entry.getValue(), QBCacheSection.class);
+            answers[Integer.parseInt(entry.getKey())] = section.real_choice.equals(section.user_choice) ? 2 : 1;
+        }
+
+        /*for(i = 0;i < qbSection.current_ans;i++){
             int doing = qbSection.doing_list.get(i);
             if(qbSection.wrong.indexOf(doing) >= 0){
                 answers[i] = 1;
             }else{
                 answers[i] = 2;
             }
-        }
+        }*/
         answer_sheet.setLayoutManager(new GridLayoutManager(this, 5));
         AnswerSheetAdapter adapter = new AnswerSheetAdapter(this, answers);
         answer_sheet.setAdapter(adapter);
@@ -266,8 +342,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             public void run() {
                 LayerDrawable ld = (LayerDrawable) getResources().getDrawable(R.drawable.bottom_sheet_background);
                 int widthPixels = findViewById(R.id.bottom_sheet_banner).getMeasuredWidth();
-                int right = (int)(widthPixels * (1 - section.list_id/(double)questions_count));
-                ld.setLayerInset(1,0,0,right,0);
+                int right = (int) (widthPixels * (1 - section.list_id / (double) questions_count));
+                ld.setLayerInset(1, 0, 0, right, 0);
                 findViewById(R.id.bottom_sheet_banner).setBackground(ld);
             }
         });
@@ -370,6 +446,18 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 next_question_text.setText("反馈");
                 updateDisplayQuestion(section);
             }
+        } else if (next_question_text.getText().toString().equals("反馈")) {
+            Intent intent = new Intent(DoExam.this, Feedback.class);
+            intent.putExtra("tiku_version", ZMUtil.getTikuVersion(DoExam.this).version_name);
+            intent.putExtra("qb_name", qb_name);
+            QBSection qbSection = qb.getQBData(qb.getUserId(), qb_name);
+            if (qbSection.doing_list.size() > view_id)
+                intent.putExtra("tiku_id", Integer.toString(qbSection.doing_list.get(view_id)));
+            if (android.os.Build.VERSION.SDK_INT < 26) {
+                startActivity(intent);
+            } else {
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(DoExam.this).toBundle());
+            }
         }
     }
 
@@ -435,10 +523,10 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             layout4.setEnabled(false);
             layout5.setEnabled(false);
 
-            ((AnswerSheetAdapter)answer_sheet.getAdapter()).setItem(section.list_id,result.status?2:1);
+            ((AnswerSheetAdapter) answer_sheet.getAdapter()).setItem(section.list_id, result.status ? 2 : 1);
 
-            if(result.is_end) {
-                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener(){
+            if (result.is_end) {
+                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finishAfterTransition();
@@ -466,6 +554,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             }
         } else if (submit_btn.getText().equals("下一题") || submit_btn.getText().equals("回到当前")) {
             updateDisplayQuestion(qb.next(user_id, qb_name, shuffle));
+            next_question_text.setText("反馈");
         }
     }
 
@@ -538,14 +627,14 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         // binds the data to the TextView in each cell
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.myTextView.setText(String.valueOf(position+1));
-            if(mData[position] == 1){ // 错误
+            holder.myTextView.setText(String.valueOf(position + 1));
+            if (mData[position] == 1) { // 错误
                 holder.myTextView.setTextColor(getResources().getColor(R.color.white));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle_red));
-            }else if(mData[position] == 2){ // 正确
+            } else if (mData[position] == 2) { // 正确
                 holder.myTextView.setTextColor(getResources().getColor(R.color.white));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle_green));
-            }else{
+            } else {
                 holder.myTextView.setTextColor(getResources().getColor(R.color.primary_text));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle));
             }
@@ -569,7 +658,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 int position = Integer.valueOf(myTextView.getText().toString()) - 1;
-                if(mData[position] != 0){
+                if (mData[position] != 0) {
                     SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
                     String json = p.getString(Integer.toString(position), "");
                     if (json.equals(""))
@@ -595,15 +684,11 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         int getItem(int position) {
             return mData[position];
         }
-        void setItem(int position,int value){
+
+        void setItem(int position, int value) {
             mData[position] = value;
             this.notifyItemChanged(position);
         }
-    }
-
-    private void showNext(String user_id, String qb_name, boolean shuffle) {
-        section = qb.next(user_id, qb_name, shuffle);
-        updateDisplayQuestion(section);
     }
 
     /**
