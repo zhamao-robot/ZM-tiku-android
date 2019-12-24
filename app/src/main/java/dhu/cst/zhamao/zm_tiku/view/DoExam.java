@@ -84,6 +84,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
     private int questions_count;
     private TextToSpeech tts = null;
 
+    BottomSheetBehavior bottomSheetBehavior;
     GestureDetector mDetector;
 
     @Override
@@ -227,7 +228,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             }
         });
 
-        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout);
         final View background_mask = findViewById(R.id.background_mask);
         background_mask.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -720,7 +721,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
     }
 
     class mGestureDetector implements GestureDetector.OnGestureListener{
-        static final float FLIP_DISTANCE = 50;
+        static final float FLIP_DISTANCE = 200;
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             return false;
@@ -749,6 +750,16 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             if (e2.getX() - e1.getX() > FLIP_DISTANCE) {
                 // 右划
                 last_question_text.callOnClick();
+                return true;
+            }
+            if (e1.getY() - e2.getY() > FLIP_DISTANCE) {
+                // 上划
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                return true;
+            }
+            if (e2.getY() - e1.getY() > FLIP_DISTANCE) {
+                // 下滑
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return true;
             }
             return false;
