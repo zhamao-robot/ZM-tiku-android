@@ -51,6 +51,7 @@ public class SelectBank extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
         final FloatingActionButton updateButton = findViewById(R.id.upateButton);
+        updateButton.show();
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         //如果本地题库损坏或者本地还没拉题库，则从Asset拉取题库文件
@@ -172,6 +173,7 @@ public class SelectBank extends AppCompatActivity {
                         SelectBankFragment fragment = new SelectBankFragment();
                         fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
                         fragmentTransaction.commit();
+                        updateButton.show();
                     }
                 }else if(item_name.equals("查看错题本")){
                     item.setChecked(true);
@@ -181,6 +183,7 @@ public class SelectBank extends AppCompatActivity {
                         BookmarkFragment fragment = new BookmarkFragment();
                         fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
                         fragmentTransaction.commit();
+                        updateButton.hide();
                     }
                 } else if(item_name.equals("反馈")) {
                     Intent intent = new Intent(SelectBank.this, Feedback.class);
