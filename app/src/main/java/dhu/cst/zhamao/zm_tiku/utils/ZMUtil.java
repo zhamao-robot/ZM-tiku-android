@@ -225,6 +225,85 @@ public class ZMUtil {
         }
     }
 
+    public static void submitFeedback(final Activity activity,
+                                      final String contact,
+                                      final String title,
+                                      final String content,
+                                      final Map<String, String> extra,
+                                      final Runnable runnable,
+                                      final Runnable failRunnable) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL("https://api.zhamao.xin/tiku-app?tiku_api=feedback");
+                    connection = (HttpURLConnection) url.openConnection();
+                    //设置请求方法
+                    connection.setRequestMethod("POST");
+                    //设置连接超时时间（毫秒）
+                    connection.setConnectTimeout(5000);
+                    //设置读取超时时间（毫秒）
+                    connection.setReadTimeout(5000);
+
+                    connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+
+                    String data = "SystemVersion=" + URLEncoder.encode(android.os.Build.VERSION.RELEASE, "utf-8") + //获取当前手机系统版本号
+                            "&SystemModel=" + URLEncoder.encode(android.os.Build.MODEL, "utf-8") + //获取手机型号
+                            "&DeviceBrand=" + URLEncoder.encode(android.os.Build.MODEL, "utf-8") + //获取手机厂商
+                            "&SystemLanguage=" + URLEncoder.encode(Locale.getDefault().getLanguage(), "utf-8"); //获取语言
+                    data += "&contact=" + URLEncoder.encode(contact, "utf-8");
+                    data += "&title=" + URLEncoder.encode(title, "utf-8");
+                    data += "&content=" + URLEncoder.encode(content, "utf-8");
+                    if(extra != null) {
+                        for (Map.Entry<String, String> entry : extra.entrySet()) {
+                            data += "&" + URLEncoder.encode(entry.getKey(), "utf-8") + "=" + URLEncoder.encode(entry.getValue(), "utf-8");
+                        }
+                    }
+
+                    //3设置给服务器写的数据的长度
+                    connection.setRequestProperty("Content-Length", String.valueOf(data.length()));
+
+                    //4指定要给服务器写数据
+                    connection.setDoOutput(true);
+
+                    //5开始向服务器写数据
+                    connection.getOutputStream().write(data.getBytes());
+
+                    int code = connection.getResponseCode();
+                    if (code != 200) throw new IOException("返回值不是200！");
+
+                    //返回输入流
+                    InputStream in = connection.getInputStream();
+
+                    //读取输入流
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+                    activity.runOnUiThread(runnable);
+                } catch (IOException e) {
+                    activity.runOnUiThread(failRunnable);
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (connection != null) {//关闭连接
+                        connection.disconnect();
+                    }
+                }
+            }
+        }).start();
+    }
+
     public static void checkUpdate(final Activity activity, View v, final Runnable runnable, final Runnable failRunnable) {
         new Thread(new Runnable() {
             @Override

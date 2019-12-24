@@ -6,8 +6,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.LayerDrawable;
@@ -176,8 +178,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         current_progress_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED)
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED)
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 else bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
@@ -192,7 +194,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         int i;
         Gson gson = new Gson();
         SharedPreferences pref = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
-        for(Map.Entry<String, ?> entry : pref.getAll().entrySet()) {
+        for (Map.Entry<String, ?> entry : pref.getAll().entrySet()) {
             QBCacheSection section = gson.fromJson((String) entry.getValue(), QBCacheSection.class);
             answers[Integer.parseInt(entry.getKey())] = section.real_choice.equals(section.user_choice) ? 2 : 1;
         }
@@ -272,8 +274,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             public void run() {
                 LayerDrawable ld = (LayerDrawable) getResources().getDrawable(R.drawable.bottom_sheet_background);
                 int widthPixels = findViewById(R.id.bottom_sheet_banner).getMeasuredWidth();
-                int right = (int)(widthPixels * (1 - section.list_id/(double)questions_count));
-                ld.setLayerInset(1,0,0,right,0);
+                int right = (int) (widthPixels * (1 - section.list_id / (double) questions_count));
+                ld.setLayerInset(1, 0, 0, right, 0);
                 findViewById(R.id.bottom_sheet_banner).setBackground(ld);
             }
         });
@@ -376,6 +378,18 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 next_question_text.setText("反馈");
                 updateDisplayQuestion(section);
             }
+        } else if (next_question_text.getText().toString().equals("反馈")) {
+            Intent intent = new Intent(DoExam.this, Feedback.class);
+            intent.putExtra("tiku_version", ZMUtil.getTikuVersion(DoExam.this).version_name);
+            intent.putExtra("qb_name", qb_name);
+            QBSection qbSection = qb.getQBData(qb.getUserId(), qb_name);
+            if (qbSection.doing_list.size() > view_id)
+                intent.putExtra("tiku_id", Integer.toString(qbSection.doing_list.get(view_id)));
+            if (android.os.Build.VERSION.SDK_INT < 26) {
+                startActivity(intent);
+            } else {
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(DoExam.this).toBundle());
+            }
         }
     }
 
@@ -441,10 +455,10 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             layout4.setEnabled(false);
             layout5.setEnabled(false);
 
-            ((AnswerSheetAdapter)answer_sheet.getAdapter()).setItem(section.list_id,result.status?2:1);
+            ((AnswerSheetAdapter) answer_sheet.getAdapter()).setItem(section.list_id, result.status ? 2 : 1);
 
-            if(result.is_end) {
-                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener(){
+            if (result.is_end) {
+                ZMUtil.showDialog(this, result.res_message.get("title"), result.res_message.get("content"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finishAfterTransition();
@@ -545,14 +559,14 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         // binds the data to the TextView in each cell
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.myTextView.setText(String.valueOf(position+1));
-            if(mData[position] == 1){ // 错误
+            holder.myTextView.setText(String.valueOf(position + 1));
+            if (mData[position] == 1) { // 错误
                 holder.myTextView.setTextColor(getResources().getColor(R.color.white));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle_red));
-            }else if(mData[position] == 2){ // 正确
+            } else if (mData[position] == 2) { // 正确
                 holder.myTextView.setTextColor(getResources().getColor(R.color.white));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle_green));
-            }else{
+            } else {
                 holder.myTextView.setTextColor(getResources().getColor(R.color.primary_text));
                 holder.myTextView.setBackground(getDrawable(R.drawable.circle));
             }
@@ -576,7 +590,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 int position = Integer.valueOf(myTextView.getText().toString()) - 1;
-                if(mData[position] != 0){
+                if (mData[position] != 0) {
                     SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
                     String json = p.getString(Integer.toString(position), "");
                     if (json.equals(""))
@@ -602,7 +616,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         int getItem(int position) {
             return mData[position];
         }
-        void setItem(int position,int value){
+
+        void setItem(int position, int value) {
             mData[position] = value;
             this.notifyItemChanged(position);
         }

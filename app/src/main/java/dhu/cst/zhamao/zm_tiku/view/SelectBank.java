@@ -182,7 +182,15 @@ public class SelectBank extends AppCompatActivity {
                         fragmentTransaction.replace(R.id.fragment_container, fragment,"main");
                         fragmentTransaction.commit();
                     }
-                } else {
+                } else if(item_name.equals("反馈")) {
+                    Intent intent = new Intent(SelectBank.this, Feedback.class);
+                    intent.putExtra("tiku_version", ZMUtil.getTikuVersion(SelectBank.this).version_name);
+                    if (android.os.Build.VERSION.SDK_INT < 26) {
+                        startActivity(intent);
+                    } else {
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                    }
+                }else {
                     Snackbar.make(findViewById(R.id.ConstraintLayout), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                 }
                 drawer.closeDrawers();
