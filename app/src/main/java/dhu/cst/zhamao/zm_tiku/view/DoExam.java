@@ -22,6 +22,8 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,6 +83,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
     private int view_id;
     private int questions_count;
     private TextToSpeech tts = null;
+
+    GestureDetector mDetector;
 
     @Override
     public boolean onLongClick(View v) {
@@ -167,6 +171,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         mSpeech.setSpeechRate(0.5f);
         mSpeech.setPitch(1.0f);
         mSpeech.setLanguage(Locale.CHINESE);
+
+        mDetector = new GestureDetector(DoExam.this, new mGestureDetector());
 
         //linearLayout5.setVisibility(View.GONE);
         question_view = findViewById(R.id.questionView);
@@ -703,8 +709,54 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         // your code.
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mDetector.onTouchEvent(event);
+    }
+
     private void setAnswerColor(MaterialTextView cur, int text_color, int bg_color) {
         cur.setTextColor(getResources().getColor(text_color));
         cur.setBackground(getDrawable(bg_color));
+    }
+
+    class mGestureDetector implements GestureDetector.OnGestureListener{
+        static final float FLIP_DISTANCE = 50;
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (e1.getX() - e2.getX() > FLIP_DISTANCE) {
+                // 左划
+                next_question_text.callOnClick();
+                return true;
+            }
+            if (e2.getX() - e1.getX() > FLIP_DISTANCE) {
+                // 右划
+                last_question_text.callOnClick();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
     }
 }
