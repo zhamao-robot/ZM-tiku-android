@@ -155,6 +155,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
         background_mask.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 return true;
             }
         });
@@ -354,14 +355,14 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
                 String json = p.getString(Integer.toString(list_id + 1), "");
                 if (json.equals(""))
-                    Snackbar.make(findViewById(R.id.doExamLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
                 else {
                     try {
                         Gson gson = new Gson();
                         QBCacheSection section = gson.fromJson(json, QBCacheSection.class);
                         updateLastDisplayQuestion(section);
                     } catch (JsonSyntaxException e) {
-                        Snackbar.make(findViewById(R.id.doExamLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
                         last_error = e.getMessage() + "\n缓存的json：" + json;
                     }
                 }
@@ -375,7 +376,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
     public void showLastQuestion() {
         int list_id = view_id;
         if (list_id == 0) {
-            Snackbar.make(findViewById(R.id.doExamLayout), "没有上一题啦！", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "没有上一题啦！", Snackbar.LENGTH_SHORT).show();
         } else {
 
             SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
@@ -395,7 +396,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                     next_question_text.setText("下一题");
                     updateLastDisplayQuestion(section);
                 } catch (Exception e) {
-                    Snackbar.make(findViewById(R.id.doExamLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
                     last_error = e.getMessage() + "\n缓存的json：" + json;
                 }
             }
@@ -409,7 +410,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                 if (entry.getValue()) answer.append(entry.getKey());
             }
             if (answer.toString().equals("")) {
-                Snackbar.make(findViewById(R.id.doExamLayout), "请选择至少一个选项", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "请选择至少一个选项", Snackbar.LENGTH_SHORT).show();
                 return;
             }
             String current_question = section.question.question;
@@ -572,7 +573,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                     SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
                     String json = p.getString(Integer.toString(position), "");
                     if (json.equals(""))
-                        Snackbar.make(findViewById(R.id.doExamLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
                     else {
                         try {
                             Gson gson = new Gson();
@@ -581,7 +582,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener {
                             next_question_text.setText("下一题");
                             updateLastDisplayQuestion(section);
                         } catch (JsonSyntaxException e) {
-                            Snackbar.make(findViewById(R.id.doExamLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "出错啦！记得反馈一下此问题哦！", Snackbar.LENGTH_LONG).show();
                             last_error = e.getMessage() + "\n缓存的json：" + json;
                         }
                     }
