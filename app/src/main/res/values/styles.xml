@@ -9,7 +9,12 @@
         <item name="android:windowExitTransition">@transition/slide</item>
         <item name="android:windowEnterAnimation">@transition/slide</item>
     </style>
-    <style name="ToolBarTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="ToolBarTheme" parent="ThemeOverlay.MaterialComponents.Dark">
         <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/primary</item>
+    </style>
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>
     </style>
 </resources>

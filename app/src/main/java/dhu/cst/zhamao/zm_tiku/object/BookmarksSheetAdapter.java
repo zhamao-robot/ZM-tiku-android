@@ -142,7 +142,7 @@ public class BookmarksSheetAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 textViews.get(entry.getKey()).setVisibility(View.VISIBLE);
             }
             String key = data.tikuData.key;
-            String[] key_list = key.split(" ");
+            String[] key_list = key.split("");
             for (String s : key_list) {
                 if (s.equals("")) continue;
                 textViews.get(s).setTextColor(context.getResources().getColor(R.color.green));

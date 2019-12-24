@@ -165,6 +165,7 @@ public class SelectBank extends AppCompatActivity {
                     }
                 } else if (item_name.equals("开始练习")) {
                     item.setChecked(true);
+                    updateButton.setVisibility(View.VISIBLE);
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     if (!(fragmentManager.findFragmentByTag("main") instanceof SelectBankFragment)) {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -175,7 +176,7 @@ public class SelectBank extends AppCompatActivity {
                     }
                 } else if (item_name.equals("查看错题本")) {
                     item.setChecked(true);
-
+                    updateButton.setVisibility(View.GONE);
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     if (!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)) {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
