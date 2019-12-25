@@ -113,7 +113,8 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                 int result = tts.setLanguage(Locale.CHINA);
                 if (result == TextToSpeech.LANG_MISSING_DATA
                         || result == TextToSpeech.LANG_NOT_SUPPORTED){
-                    Toast.makeText(DoExam.this,"数据丢失或不支持",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DoExam.this,"你的手机不支持语音朗读，将为您关闭！",Toast.LENGTH_SHORT).show();
+                    getSharedPreferences("tts", MODE_PRIVATE).edit().putBoolean("enable", false).apply();
                     tts = null;
                 }
 //                int supported = mSpeech.setLanguage(Locale.US);
@@ -164,12 +165,13 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         TextView answerText1 = findViewById(R.id.answerText1);
         answerText1.getText().toString();
 
-        TextToSpeech mSpeech = new TextToSpeech(this, new TTSListener());
-        tts = mSpeech;
-        mSpeech.setSpeechRate(0.5f);
-        mSpeech.setPitch(1.0f);
-        mSpeech.setLanguage(Locale.CHINESE);
-
+        if(getSharedPreferences("tts", MODE_PRIVATE).contains("enable") && getSharedPreferences("tts", MODE_PRIVATE).getBoolean("enable", true)) {
+            TextToSpeech mSpeech = new TextToSpeech(this, new TTSListener());
+            tts = mSpeech;
+            mSpeech.setSpeechRate(0.5f);
+            mSpeech.setPitch(1.0f);
+            mSpeech.setLanguage(Locale.CHINESE);
+        }
         mDetector = new GestureDetector(DoExam.this, new mGestureDetector());
 
         //linearLayout5.setVisibility(View.GONE);

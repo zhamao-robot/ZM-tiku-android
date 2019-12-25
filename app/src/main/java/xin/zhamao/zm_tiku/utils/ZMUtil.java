@@ -246,7 +246,7 @@ public class ZMUtil {
                     data += "&contact=" + URLEncoder.encode(contact, "utf-8");
                     data += "&title=" + URLEncoder.encode(title, "utf-8");
                     data += "&content=" + URLEncoder.encode(content, "utf-8");
-                    if(extra != null) {
+                    if (extra != null) {
                         for (Map.Entry<String, String> entry : extra.entrySet()) {
                             data += "&" + URLEncoder.encode(entry.getKey(), "utf-8") + "=" + URLEncoder.encode(entry.getValue(), "utf-8");
                         }
@@ -294,7 +294,7 @@ public class ZMUtil {
         }).start();
     }
 
-    public static void checkUpdate(final Activity activity, View v, final Runnable runnable, final Runnable failRunnable) {
+    public static void checkUpdate(final Activity activity, final Runnable runnable, final Runnable failRunnable) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -341,9 +341,11 @@ public class ZMUtil {
                         result.append(line);
                     }
                     runOnUI(activity, result.toString());
-                    activity.runOnUiThread(runnable);
+                    if (runnable != null)
+                        activity.runOnUiThread(runnable);
                 } catch (IOException e) {
-                    activity.runOnUiThread(failRunnable);
+                    if (failRunnable != null)
+                        activity.runOnUiThread(failRunnable);
                     e.printStackTrace();
                 } finally {
                     if (reader != null) {

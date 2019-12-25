@@ -62,6 +62,7 @@ public class SelectBank extends AppCompatActivity {
             ZMUtil.copyAssetsFile2Phone(this, "makesi.json");
             ZMUtil.copyAssetsFile2Phone(this, "version.json");
             Snackbar.make(findViewById(R.id.fragment_container), "成功导入题库 !", Snackbar.LENGTH_LONG).show();
+            ZMUtil.checkUpdate(this, null, null);
         } else {
             String json = ZMUtil.loadInternalFile(this, "version.json");
             Gson gson = new Gson();
@@ -221,7 +222,7 @@ public class SelectBank extends AppCompatActivity {
             }
             circle_anim.setInterpolator(interpolator);
             v.startAnimation(circle_anim);  //开始动画
-            ZMUtil.checkUpdate(SelectBank.this, v, new Runnable() { //检查更新
+            ZMUtil.checkUpdate(SelectBank.this, new Runnable() { //检查更新
                 @Override
                 public void run() {
                     v.clearAnimation();
