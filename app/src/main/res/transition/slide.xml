@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <slide xmlns:android="http://schemas.android.com/apk/res/android"
     android:interpolator="@android:interpolator/decelerate_cubic"
-    android:slideEdge="start"
+    android:slideEdge="left"
     android:duration="700">
     <targets>
         <target android:excludeId="@android:id/navigationBarBackground" />
