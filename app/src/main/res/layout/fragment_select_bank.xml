@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.SelectBankFragment">
+    tools:context="xin.zhamao.zm_tiku.view.SelectBankFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ConstraintLayout"
@@ -11,7 +11,7 @@
         android:layout_marginTop="56dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.SelectBank">
+        tools:context="xin.zhamao.zm_tiku.view.SelectBank">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView1"

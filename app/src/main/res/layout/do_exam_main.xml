@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="56dp"
     android:paddingBottom="56dp"
-    tools:context=".view.DoExam">
+    tools:context="xin.zhamao.zm_tiku.view.DoExam">
 
     <TextView
         android:id="@+id/questionView"

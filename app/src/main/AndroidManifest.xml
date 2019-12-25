@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="dhu.cst.zhamao.zm_tiku">
+    package="xin.zhamao.zhamao.zm_tiku">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,9 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".view.Feedback" />
+        <activity android:name="xin.zhamao.zm_tiku.view.Feedback" />
         <activity
-            android:name=".view.SplashActivity"
+            android:name="xin.zhamao.zm_tiku.view.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,18 +23,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.TestBank" />
+        <activity android:name="xin.zhamao.zm_tiku.view.TestBank" />
         <activity
-            android:name=".view.DoExam"
+            android:name="xin.zhamao.zm_tiku.view.DoExam"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SelectMode"
+            android:name="xin.zhamao.zm_tiku.view.SelectMode"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.SelectBank"
+            android:name="xin.zhamao.zm_tiku.view.SelectBank"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.AboutMe"
+            android:name="xin.zhamao.zm_tiku.view.AboutMe"
             android:screenOrientation="portrait" />
     </application>
 

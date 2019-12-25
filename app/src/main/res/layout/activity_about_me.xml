@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:background="#f8f8f8"
     android:layout_height="match_parent"
-    tools:context=".view.AboutMe">
+    tools:context="xin.zhamao.zm_tiku.view.AboutMe">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
