@@ -301,7 +301,11 @@ public class ZMUtil {
                 HttpURLConnection connection = null;
                 BufferedReader reader = null;
                 try {
-                    URL url = new URL("https://api.zhamao.xin/tiku-app?tiku_api=check_update&api_ver=" + API_VER);
+                    final PackageInfo packageInfo;
+                    packageInfo = activity.getApplicationContext()
+                            .getPackageManager()
+                            .getPackageInfo(activity.getPackageName(), 0);
+                    URL url = new URL("https://api.zhamao.xin/tiku-app?tiku_api=check_update&api_ver=" + packageInfo.versionName);
                     connection = (HttpURLConnection) url.openConnection();
                     //设置请求方法
                     connection.setRequestMethod("POST");
@@ -340,10 +344,11 @@ public class ZMUtil {
                     while ((line = reader.readLine()) != null) {
                         result.append(line);
                     }
-                    runOnUI(activity, result.toString());
-                    if (runnable != null)
+                    if (runnable != null) {
+                        runOnUI(activity, result.toString());
                         activity.runOnUiThread(runnable);
-                } catch (IOException e) {
+                    }
+                } catch (IOException | PackageManager.NameNotFoundException e) {
                     if (failRunnable != null)
                         activity.runOnUiThread(failRunnable);
                     e.printStackTrace();
@@ -379,6 +384,7 @@ public class ZMUtil {
     public class TikuApiVersion {
         String latest_version;
         String download_link;
+        String commit_msg;
         String tiku_version;
         Map<String, String> tiku_download_link;
     }
@@ -403,7 +409,7 @@ public class ZMUtil {
                                 makeDialog(
                                         activity,
                                         "确定更新吗？",
-                                        "App最新版本是 " + v.latest_version + "，点击确定下载最新版App",
+                                        "App最新版本是 " + v.latest_version + "，更新内容如下：" + v.commit_msg + "\n点击确定下载最新版App",
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {

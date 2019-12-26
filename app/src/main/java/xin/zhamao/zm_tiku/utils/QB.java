@@ -368,7 +368,6 @@ public class QB {
         }
         QBSection section = new QBSection(this, user_id, qb_name);
         section.doing_list = doing_list;
-        section.wrong = new ArrayList<>();
         section.doing = 1;
         section.current_ans = 0;
         section.answer_count = 0;
