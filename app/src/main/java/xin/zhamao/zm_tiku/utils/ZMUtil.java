@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 

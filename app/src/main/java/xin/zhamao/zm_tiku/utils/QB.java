@@ -174,6 +174,24 @@ public class QB {
                     }
                 }
                 break;
+            case "模拟考场":
+            case "simulate":
+                List<Integer> single = new ArrayList<>();
+                List<Integer> multi = new ArrayList<>();
+                for(Map.Entry<String, TikuSection> entry : qb.entrySet()) {
+                    if(entry.getValue().answer_type == 0) {
+                        single.add(Integer.parseInt(entry.getKey()));
+                    } else if(entry.getValue().answer_type == 1) {
+                        multi.add(Integer.parseInt(entry.getKey()));
+                    }
+                }
+                Collections.shuffle(single);
+                Collections.shuffle(multi);
+                single = single.subList(0, 60);
+                multi = multi.subList(0, 20);
+                single.addAll(multi);
+                ls = single;
+                break;
             //TODO: 多选随机，单选随机，高频，跳转
         }
         return ls;
@@ -388,7 +406,7 @@ public class QB {
     }
 
     private String convertModeName(int qb_mode) {
-        List<String> ls = Arrays.asList("normal", "单选", "多选", "错题", "随机", "高频", "单选随机", "多选随机");
+        List<String> ls = Arrays.asList("normal", "单选", "多选", "错题", "随机", "模拟考场", "单选随机", "多选随机");
         try {
             return ls.get(qb_mode);
         } catch (IndexOutOfBoundsException e) {

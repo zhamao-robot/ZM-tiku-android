@@ -36,7 +36,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     SwitchMaterial shuffleSwitch;
     SwitchMaterial autoNextSwitch;
 
-    final String[] mode_list = {"顺序做题", "只做单选", "只做多选", "错题练习", "随机做题"};
+    final String[] mode_list = {"顺序做题", "只做单选", "只做多选", "错题练习", "随机做题", "模拟考场"};
 
     private UserInfo info;
 
@@ -197,7 +197,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "自动跳过已打开" : "自动跳过已关闭"), Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.shuffleSwitch:
-                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开，但如果点击过快可能会出现答案错位的现象，请谨慎使用！" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
                 break;
         }
     }

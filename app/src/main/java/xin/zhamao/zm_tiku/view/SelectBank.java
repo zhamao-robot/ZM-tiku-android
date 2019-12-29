@@ -80,7 +80,9 @@ public class SelectBank extends AppCompatActivity {
                     if (!pref.getString("current_version", "0.1").equals(packageInfo.versionName)) {
                         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
                         builder.setTitle("检测到题库App中题库有更新");
-                        builder.setMessage("原来的题库版本是 " + ver.version_name + "，新版题库版本是 " + ass_ver.version_name + "，是否更新内置题库？更新题库将重置所有的做题进度且无法恢复！");
+                        builder.setMessage("原来的题库版本是 " + ver.version_name + "，新版题库版本是 " + ass_ver.version_name + "，是否更新内置题库？"
+                         + (ass_ver.tiku_hash.equals("no") ? "本次更新题库不会重置进度" : "本次更新题库会重置题库进度且不可恢复！")
+                                );
                         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -93,12 +95,14 @@ public class SelectBank extends AppCompatActivity {
                                 SharedPreferences.Editor editor = getSharedPreferences("qb_update", Context.MODE_PRIVATE).edit();
                                 editor.putString("current_version", packageInfo.versionName);
                                 editor.apply();
-                                QB qb = new QB(SelectBank.this);
-                                qb.getDB().queryQB("DELETE FROM qb", new String[]{});
-                                getSharedPreferences("qb_cache_politics", Context.MODE_PRIVATE).edit().clear().apply();
-                                getSharedPreferences("qb_cache_history", Context.MODE_PRIVATE).edit().clear().apply();
-                                getSharedPreferences("qb_cache_maogai", Context.MODE_PRIVATE).edit().clear().apply();
-                                getSharedPreferences("qb_cache_makesi", Context.MODE_PRIVATE).edit().clear().apply();
+                                if(!ass_ver.tiku_hash.equals("no")) {
+                                    QB qb = new QB(SelectBank.this);
+                                    qb.getDB().queryQB("DELETE FROM qb", new String[]{});
+                                    getSharedPreferences("qb_cache_politics", Context.MODE_PRIVATE).edit().clear().apply();
+                                    getSharedPreferences("qb_cache_history", Context.MODE_PRIVATE).edit().clear().apply();
+                                    getSharedPreferences("qb_cache_maogai", Context.MODE_PRIVATE).edit().clear().apply();
+                                    getSharedPreferences("qb_cache_makesi", Context.MODE_PRIVATE).edit().clear().apply();
+                                }
                             }
                         });
                         builder.setNeutralButton("不再提示", new DialogInterface.OnClickListener() {
@@ -157,45 +161,55 @@ public class SelectBank extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 String item_name = item.getTitle().toString();
-                if (item_name.equals("关于")) {
-                    Intent intent = new Intent(SelectBank.this, AboutMe.class);
-                    if (android.os.Build.VERSION.SDK_INT < 26) {
-                        startActivity(intent);
-                    } else {
-                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                switch (item_name) {
+                    case "关于": {
+                        Intent intent = new Intent(SelectBank.this, AboutMe.class);
+                        if (android.os.Build.VERSION.SDK_INT < 26) {
+                            startActivity(intent);
+                        } else {
+                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                        }
+                        break;
                     }
-                } else if (item_name.equals("开始练习")) {
-                    item.setChecked(true);
-                    updateButton.setVisibility(View.VISIBLE);
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    if (!(fragmentManager.findFragmentByTag("main") instanceof SelectBankFragment)) {
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        SelectBankFragment fragment = new SelectBankFragment();
-                        fragmentTransaction.replace(R.id.fragment_container, fragment, "main");
-                        fragmentTransaction.commit();
-                        updateButton.show();
+                    case "开始练习": {
+                        item.setChecked(true);
+                        updateButton.setVisibility(View.VISIBLE);
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        if (!(fragmentManager.findFragmentByTag("main") instanceof SelectBankFragment)) {
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            SelectBankFragment fragment = new SelectBankFragment();
+                            fragmentTransaction.replace(R.id.fragment_container, fragment, "main");
+                            fragmentTransaction.commit();
+                            updateButton.show();
+                        }
+                        break;
                     }
-                } else if (item_name.equals("查看错题本")) {
-                    item.setChecked(true);
-                    updateButton.setVisibility(View.GONE);
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    if (!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)) {
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        BookmarkFragment fragment = new BookmarkFragment();
-                        fragmentTransaction.replace(R.id.fragment_container, fragment, "main");
-                        fragmentTransaction.commit();
-                        updateButton.hide();
+                    case "查看错题本": {
+                        item.setChecked(true);
+                        updateButton.setVisibility(View.GONE);
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        if (!(fragmentManager.findFragmentByTag("main") instanceof BookmarkFragment)) {
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            BookmarkFragment fragment = new BookmarkFragment();
+                            fragmentTransaction.replace(R.id.fragment_container, fragment, "main");
+                            fragmentTransaction.commit();
+                            updateButton.hide();
+                        }
+                        break;
                     }
-                } else if (item_name.equals("反馈")) {
-                    Intent intent = new Intent(SelectBank.this, Feedback.class);
-                    intent.putExtra("tiku_version", ZMUtil.getTikuVersion(SelectBank.this).version_name);
-                    if (android.os.Build.VERSION.SDK_INT < 26) {
-                        startActivity(intent);
-                    } else {
-                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                    case "反馈": {
+                        Intent intent = new Intent(SelectBank.this, Feedback.class);
+                        intent.putExtra("tiku_version", ZMUtil.getTikuVersion(SelectBank.this).version_name);
+                        if (android.os.Build.VERSION.SDK_INT < 26) {
+                            startActivity(intent);
+                        } else {
+                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                        }
+                        break;
                     }
-                } else {
-                    Snackbar.make(findViewById(R.id.fragment_container), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
+                    default:
+                        Snackbar.make(findViewById(R.id.fragment_container), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
+                        break;
                 }
                 drawer.closeDrawers();
                 return true;

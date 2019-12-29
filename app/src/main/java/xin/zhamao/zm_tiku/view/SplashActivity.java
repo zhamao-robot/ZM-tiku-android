@@ -24,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
                 Intent intent = new Intent(SplashActivity.this, SelectBank.class);
                 startActivity(intent);
                 finish();
-            }
+        }
         },1000);
     }
 }
