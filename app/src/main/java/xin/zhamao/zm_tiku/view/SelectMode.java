@@ -197,7 +197,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "自动跳过已打开" : "自动跳过已关闭"), Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.shuffleSwitch:
-                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开，但如果点击过快可能会出现答案错位的现象，请谨慎使用！" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
                 break;
         }
     }

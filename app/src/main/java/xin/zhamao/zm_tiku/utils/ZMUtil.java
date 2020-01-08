@@ -40,6 +40,7 @@ import java.util.Map;
 
 import xin.zhamao.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.TikuVersion;
+import xin.zhamao.zm_tiku.view.SelectBank;
 
 
 public class ZMUtil {
@@ -245,6 +246,7 @@ public class ZMUtil {
                     data += "&contact=" + URLEncoder.encode(contact, "utf-8");
                     data += "&title=" + URLEncoder.encode(title, "utf-8");
                     data += "&content=" + URLEncoder.encode(content, "utf-8");
+
                     if (extra != null) {
                         for (Map.Entry<String, String> entry : extra.entrySet()) {
                             data += "&" + URLEncoder.encode(entry.getKey(), "utf-8") + "=" + URLEncoder.encode(entry.getValue(), "utf-8");
@@ -344,8 +346,8 @@ public class ZMUtil {
                         result.append(line);
                     }
                     if (runnable != null) {
-                        runOnUI(activity, result.toString());
                         activity.runOnUiThread(runnable);
+                        runOnUI(activity, result.toString());
                     }
                 } catch (IOException | PackageManager.NameNotFoundException e) {
                     if (failRunnable != null)
@@ -365,7 +367,7 @@ public class ZMUtil {
                 }
             }
 
-            public void runOnUI(final Activity activity, final String text) {
+            void runOnUI(final Activity activity, final String text) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -408,7 +410,7 @@ public class ZMUtil {
                                 makeDialog(
                                         activity,
                                         "确定更新吗？",
-                                        "App最新版本是 " + v.latest_version + "，更新内容如下：" + v.commit_msg + "\n点击确定下载最新版App",
+                                        "App最新版本是 " + v.latest_version + "，更新内容如下：" + v.commit_msg + "\n点击确定下载最新版App\n可以到设置中关闭自动检查更新",
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -430,48 +432,7 @@ public class ZMUtil {
                     }
                 }, 300);
             } else /*if (v.tiku_version.equals(getTikuVersion(activity).version_name))*/ { //题库是最新版
-                Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "已经是最新版：" + v.latest_version, Snackbar.LENGTH_LONG).show();
-            } /*else { //题库不是最新版，弹出更新题库的对话框
-                Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "有新版本：" + v.tiku_version, Snackbar.LENGTH_LONG).show();
-                Handler startMainActivity = new Handler();
-                startMainActivity.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                makeDialog(
-                                        activity,
-                                        "确定更新吗？",
-                                        "最新版本是" + v.tiku_version + "，如果更新的话将重置你的做题进度和错题记录！",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                activity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Animation circle_anim = AnimationUtils.loadAnimation(activity, R.anim.rotate);
-                                                        LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
-                                                        circle_anim.setInterpolator(interpolator);
-                                                        activity.findViewById(R.id.upateButton).startAnimation(circle_anim);  //开始动画
-                                                    }
-                                                });
-                                                updateTiku(activity, activity.getFilesDir().getAbsolutePath(), v);
-                                            }
-                                        },
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                            }
-                                        }
-                                );
-                            }
-                        });
-
-                    }
-                }, 500);
-            }*/
+            }
         } catch (JsonSyntaxException e) {
             Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "更新服务器出错啦！请联系开发者！", Snackbar.LENGTH_LONG).show();
         } catch (PackageManager.NameNotFoundException e) {

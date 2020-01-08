@@ -36,6 +36,9 @@
         <activity
             android:name="xin.zhamao.zm_tiku.view.AboutMe"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="xin.zhamao.zm_tiku.view.Settings"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

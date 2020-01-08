@@ -40,7 +40,7 @@ import xin.zhamao.zm_tiku.utils.ZMUtil;
 
 public class SelectBank extends AppCompatActivity {
 
-    boolean isUpdateActivated = false;
+    public static boolean isUpdateActivated = false;
     private long mExitTime;
     private long last_update = 0;
 
@@ -62,7 +62,7 @@ public class SelectBank extends AppCompatActivity {
             ZMUtil.copyAssetsFile2Phone(this, "makesi.json");
             ZMUtil.copyAssetsFile2Phone(this, "version.json");
             Snackbar.make(findViewById(R.id.fragment_container), "成功导入题库 !", Snackbar.LENGTH_LONG).show();
-            ZMUtil.checkUpdate(this, null, null);
+            baseCheckUpdate();
         } else {
             String json = ZMUtil.loadInternalFile(this, "version.json");
             Gson gson = new Gson();
@@ -103,6 +103,7 @@ public class SelectBank extends AppCompatActivity {
                                     getSharedPreferences("qb_cache_maogai", Context.MODE_PRIVATE).edit().clear().apply();
                                     getSharedPreferences("qb_cache_makesi", Context.MODE_PRIVATE).edit().clear().apply();
                                 }
+                                baseCheckUpdate();
                             }
                         });
                         builder.setNeutralButton("不再提示", new DialogInterface.OnClickListener() {
@@ -112,21 +113,29 @@ public class SelectBank extends AppCompatActivity {
                                 editor.putString("current_version", packageInfo.versionName);
                                 editor.apply();
                                 Snackbar.make(findViewById(R.id.fragment_container), "忽略更新题库", Snackbar.LENGTH_LONG).show();
+                                baseCheckUpdate();
                             }
                         });
                         builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                baseCheckUpdate();
                             }
                         });
                         builder.create().show();
+                    } else {
+                        baseCheckUpdate();
                     }
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
+            } else {
+                baseCheckUpdate();
             }
+
         }
+
+
         Toolbar toolbar = findViewById(R.id.toolBar);
         toolbar.setTitle("选择题库");
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
@@ -207,6 +216,14 @@ public class SelectBank extends AppCompatActivity {
                         }
                         break;
                     }
+                    case "设置":
+                        Intent intent = new Intent(SelectBank.this, Settings.class);
+                        if (android.os.Build.VERSION.SDK_INT < 26) {
+                            startActivity(intent);
+                        } else {
+                            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
+                        }
+                        break;
                     default:
                         Snackbar.make(findViewById(R.id.fragment_container), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                         break;
@@ -216,6 +233,22 @@ public class SelectBank extends AppCompatActivity {
             }
         });
         ZMUtil.initUserDB(new QB(this));
+    }
+
+    private void baseCheckUpdate() {
+        boolean auto_check = getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("check_update", true);
+        if(auto_check) {
+            ZMUtil.checkUpdate(this, new Runnable() {
+                @Override
+                public void run() {
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            });
+        }
     }
 
     public class OnClickUpdateListener implements View.OnClickListener {
@@ -241,6 +274,7 @@ public class SelectBank extends AppCompatActivity {
                 public void run() {
                     v.clearAnimation();
                     isUpdateActivated = false;
+                    Snackbar.make(findViewById(R.id.ConstraintLayout), "检查更新完毕", Snackbar.LENGTH_LONG).show();
                 }
             }, new Runnable() {
                 @Override

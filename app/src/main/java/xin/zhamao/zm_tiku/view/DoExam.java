@@ -452,7 +452,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                 }
             } else {
                 next_question_text.setText("反馈");
-                updateDisplayQuestion(section);
+                updateDisplayQuestion(qb.next(qb.getUserId(), qb_name, shuffle));
             }
         } else if (next_question_text.getText().toString().equals("反馈")) {
             Intent intent = new Intent(DoExam.this, Feedback.class);
