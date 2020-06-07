@@ -1,154 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="xin.zhamao.zm_tiku.view.SelectBankFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ConstraintLayout"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_marginTop="56dp"
+    android:layout_width="match_parent">
+    <FrameLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="xin.zhamao.zm_tiku.view.SelectBank">
+        android:layout_height="wrap_content"
+        tools:context="xin.zhamao.zm_tiku.view.SelectBankFragment">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView1"
-            style="@style/Widget.MaterialComponents.CardView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:minHeight="200dp"
-            app:layout_constraintEnd_toStartOf="@+id/materialCardView2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp"
+            tools:context="xin.zhamao.zm_tiku.view.SelectBank">
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView1"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:minHeight="200dp"
+                app:layout_constraintEnd_toStartOf="@+id/materialCardView2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/history" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
-                    android:gravity="center"
-                    android:text="近代史"
-                    android:textColor="@color/primaryTextColor" />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/history" />
 
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center"
+                        android:text="近代史"
+                        android:textColor="@color/primaryTextColor" />
+                </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView2"
-            style="@style/Widget.MaterialComponents.CardView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:minHeight="200dp"
-            app:layout_constraintStart_toEndOf="@id/materialCardView1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView2"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:minHeight="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/materialCardView1"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/makesi" />
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
-                    android:gravity="center"
-                    android:text="马克思"
-                    android:textColor="@color/primaryTextColor" />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/makesi" />
 
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center"
+                        android:text="马克思"
+                        android:textColor="@color/primaryTextColor" />
+                </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView3"
-            style="@style/Widget.MaterialComponents.CardView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:minHeight="200dp"
-            app:layout_constraintEnd_toStartOf="@+id/materialCardView4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView1">
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView3"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:minHeight="200dp"
+                app:layout_constraintEnd_toStartOf="@+id/materialCardView4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/materialCardView1">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/maogai" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
-                    android:gravity="center"
-                    android:text="毛概"
-                    android:textColor="@color/primaryTextColor" />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/maogai" />
 
-        </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center"
+                        android:text="毛概"
+                        android:textColor="@color/primaryTextColor" />
+                </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView4"
-            style="@style/Widget.MaterialComponents.CardView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:minHeight="200dp"
-            app:layout_constraintStart_toEndOf="@+id/materialCardView3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView2">
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView4"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:minHeight="200dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/materialCardView3"
+                app:layout_constraintTop_toBottomOf="@+id/materialCardView2">
 
-                <ImageView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/politics" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/politics" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center"
+                        android:text="思修"
+                        android:textColor="@color/primaryTextColor" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView5"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:minHeight="200dp"
+                app:layout_constraintEnd_toStartOf="@+id/materialCardView4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/materialCardView3">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
-                    android:gravity="center"
-                    android:text="思修"
-                    android:textColor="@color/primaryTextColor" />
-            </LinearLayout>
+                    android:orientation="vertical">
 
-        </com.google.android.material.card.MaterialCardView>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/maogai" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:gravity="center"
+                        android:text="毛概2"
+                        android:textColor="@color/primaryTextColor" />
+                </LinearLayout>
 
-</FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</ScrollView>

@@ -57,6 +57,8 @@ public class QB {
                 return "思修题库";
             case "maogai":
                 return "毛概题库";
+            case "maogai2":
+                return "毛概2题库";
             case "makesi":
                 return "马克思题库";
             case "test":
@@ -72,6 +74,9 @@ public class QB {
             case "毛概题库":
             case "毛概":
                 return "maogai";
+            case "毛概2题库":
+            case "毛概2":
+                return "maogai2";
             case "马克思题库":
             case "马克思":
                 return "makesi";

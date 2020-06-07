@@ -29,6 +29,7 @@ public class SelectBankFragment extends Fragment implements View.OnClickListener
         (view.findViewById(R.id.materialCardView2)).setOnClickListener(this);
         (view.findViewById(R.id.materialCardView3)).setOnClickListener(this);
         (view.findViewById(R.id.materialCardView4)).setOnClickListener(this);
+        (view.findViewById(R.id.materialCardView5)).setOnClickListener(this);
         return view;
     }
 
@@ -47,6 +48,9 @@ public class SelectBankFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.materialCardView4:
                 qb_name = "思修题库";
+                break;
+            case R.id.materialCardView5:
+                qb_name = "毛概2题库";
                 break;
         }
         Intent intent = new Intent(getActivity(), SelectMode.class);

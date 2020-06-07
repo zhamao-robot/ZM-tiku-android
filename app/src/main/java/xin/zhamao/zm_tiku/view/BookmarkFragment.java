@@ -74,6 +74,7 @@ public class BookmarkFragment extends Fragment {
         menu.add(0,1,0,"近代史");
         menu.add(0,2,0,"马克思");
         menu.add(0,3,0,"毛概");
+        menu.add(0,3,0,"毛概2");
         menu.add(0,4,0,"思修");
         super.onCreateOptionsMenu(menu, inflater);
     }

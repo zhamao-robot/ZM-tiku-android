@@ -547,6 +547,7 @@ public class ZMUtil {
                             public void onClick(DialogInterface dialog, int which) {
                                 copyAssetsFile2Phone(activity, "politics.json");
                                 copyAssetsFile2Phone(activity, "maogai.json");
+                                copyAssetsFile2Phone(activity, "maogai2.json");
                                 copyAssetsFile2Phone(activity, "history.json");
                                 copyAssetsFile2Phone(activity, "makesi.json");
                                 copyAssetsFile2Phone(activity, "version.json");

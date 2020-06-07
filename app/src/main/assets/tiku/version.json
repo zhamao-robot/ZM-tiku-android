@@ -1,10 +1,11 @@
 {
-  "version_name": "2020.1.6.1",
+  "version_name": "2020.6.7.1",
   "tiku_list": [
     "history",
     "makesi",
     "maogai",
-    "politics"
+    "politics",
+    "maogai2"
   ],
   "tiku_hash": "no"
 }

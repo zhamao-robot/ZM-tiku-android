@@ -751,6 +751,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                 last_question_text.callOnClick();
                 return true;
             }
+
             if (e1.getY() - e2.getY() > FLIP_DISTANCE) {
                 // 上划
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);

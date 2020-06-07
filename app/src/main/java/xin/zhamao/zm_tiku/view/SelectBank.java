@@ -60,6 +60,7 @@ public class SelectBank extends AppCompatActivity {
             ZMUtil.copyAssetsFile2Phone(this, "politics.json");
             ZMUtil.copyAssetsFile2Phone(this, "maogai.json");
             ZMUtil.copyAssetsFile2Phone(this, "makesi.json");
+            ZMUtil.copyAssetsFile2Phone(this, "maogai2.json");
             ZMUtil.copyAssetsFile2Phone(this, "version.json");
             Snackbar.make(findViewById(R.id.fragment_container), "成功导入题库 !", Snackbar.LENGTH_LONG).show();
             baseCheckUpdate();
@@ -89,6 +90,7 @@ public class SelectBank extends AppCompatActivity {
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "history.json");
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "politics.json");
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "maogai.json");
+                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "maogai2.json");
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "makesi.json");
                                 ZMUtil.copyAssetsFile2Phone(SelectBank.this, "version.json");
                                 Snackbar.make(findViewById(R.id.fragment_container), "成功更新题库到 " + ass_ver.version_name + " !", Snackbar.LENGTH_LONG).show();
@@ -102,6 +104,7 @@ public class SelectBank extends AppCompatActivity {
                                     getSharedPreferences("qb_cache_history", Context.MODE_PRIVATE).edit().clear().apply();
                                     getSharedPreferences("qb_cache_maogai", Context.MODE_PRIVATE).edit().clear().apply();
                                     getSharedPreferences("qb_cache_makesi", Context.MODE_PRIVATE).edit().clear().apply();
+                                    getSharedPreferences("qb_cache_maogai2", Context.MODE_PRIVATE).edit().clear().apply();
                                 }
                                 baseCheckUpdate();
                             }
