@@ -1,195 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ConstraintLayout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="xin.zhamao.zm_tiku.view.SelectMode">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ConstraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        >
-        <com.google.android.material.appbar.MaterialToolbar
-            android:theme="@style/ToolBarTheme"
-            android:id="@+id/toolBar"
+        android:layout_height="match_parent"
+        tools:context="xin.zhamao.zm_tiku.view.SelectMode">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </com.google.android.material.appbar.MaterialToolbar>
+            android:layout_height="56dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView"
-        style="@style/Widget.MaterialComponents.CardView"
-        android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:padding="14dp"
-        android:minHeight="130dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardUseCompatPadding="true"
-        app:cardElevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/progressText"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="7 / 14"
-                android:textColor="@color/primaryTextColor"
-                android:onClick="onClick"
-                android:textSize="32sp"
-                android:textStyle="bold" />
+                android:theme="@style/ToolBarTheme"></com.google.android.material.appbar.MaterialToolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/materialCardView"
+            style="@style/Widget.MaterialComponents.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:minHeight="130dp"
+            android:padding="14dp"
+            app:cardElevation="4dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBar">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <TextView
-                    android:id="@+id/currentModeText"
+                    android:id="@+id/progressText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="顺序做题"
+                    android:onClick="onClick"
+                    android:text="7 / 14"
                     android:textColor="@color/primaryTextColor"
-                    android:textSize="20sp" />
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/arrowImage"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:color="@color/primary_dark"
-                    app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
+                    android:orientation="vertical"
+                    android:weightSum="2">
 
+                    <TextView
+                        android:id="@+id/currentModeText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="顺序做题"
+                        android:textColor="@color/primaryTextColor"
+                        android:textSize="20sp" />
+
+                    <ImageView
+                        android:id="@+id/arrowImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:color="@color/primary_dark"
+                        app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
+
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/shuffleSwitch"
-        style="@style/Widget.MaterialComponents.CompoundButton.Switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:endColor="@color/primary"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        android:switchMinWidth="156dp"
-        android:text="打乱选项"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardView"
-        app:useMaterialThemeColors="false" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/autoNextSwitch"
-        style="@style/Widget.MaterialComponents.CompoundButton.Switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:endColor="@color/primary"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        android:text="正确时自动跳过"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shuffleSwitch"
-        android:checked="true"
-        app:useMaterialThemeColors="false" />
-
-    <LinearLayout
-        android:id="@+id/switchModeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:onClick="onClick"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/autoNextSwitch">
-
-        <TextView
-            android:id="@+id/switchModeHintText"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/shuffleSwitch"
+            style="@style/Widget.MaterialComponents.CompoundButton.Switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="切换模式"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="20sp" />
+            android:layout_marginTop="12dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:endColor="@color/primary"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:switchMinWidth="156dp"
+            android:text="打乱选项"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView"
+            app:useMaterialThemeColors="false" />
 
-        <TextView
-            android:id="@+id/switchModeNameText"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/autoNextSwitch"
+            style="@style/Widget.MaterialComponents.CompoundButton.Switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:checked="true"
+            android:endColor="@color/primary"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="正确时自动跳过"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/shuffleSwitch"
+            app:useMaterialThemeColors="false" />
+
+        <LinearLayout
+            android:id="@+id/switchModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="onClick"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/autoNextSwitch">
+
+            <TextView
+                android:id="@+id/switchModeHintText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="切换模式"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/switchModeNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="顺序做题"
+                android:textColor="@color/secondary_text" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/doExamButton"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="顺序做题"
-            android:textColor="@color/secondary_text" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:onClick="onClick"
+            android:text="开始做题"
+            app:layout_constraintEnd_toStartOf="@+id/selectBankButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchModeLayout" />
 
-    </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectBankButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="onClick"
+            android:text="重选题库"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/doExamButton"
+            app:layout_constraintTop_toBottomOf="@+id/switchModeLayout" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/doExamButton"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:onClick="onClick"
-        android:text="开始做题"
-        app:layout_constraintEnd_toStartOf="@+id/selectBankButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchModeLayout" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/selectBankButton"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="onClick"
-        android:text="重选题库"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/doExamButton"
-        app:layout_constraintTop_toBottomOf="@+id/switchModeLayout" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
