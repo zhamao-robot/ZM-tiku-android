@@ -4,6 +4,7 @@
     package="xin.zhamao.zhamao.zm_tiku">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="GoogleAppIndexingWarning"
+        android:resizeableActivity="true"
+        tools:targetApi="n">
+        <meta-data android:name="android.max_aspect" android:value="2.4" />
         <activity android:name="xin.zhamao.zm_tiku.view.Feedback" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.SplashActivity"

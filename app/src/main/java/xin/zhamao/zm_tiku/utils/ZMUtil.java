@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -382,7 +383,7 @@ public class ZMUtil {
         return System.currentTimeMillis();
     }
 
-    public class TikuApiVersion {
+    public static class TikuApiVersion {
         String latest_version;
         String download_link;
         String commit_msg;
@@ -414,6 +415,28 @@ public class ZMUtil {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
+                                                /*// TODO：切换为App内下载更新
+                                                Animation circle_anim = AnimationUtils.loadAnimation(activity, R.anim.rotate);
+                                                LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
+                                                circle_anim.setInterpolator(interpolator);
+                                                activity.findViewById(R.id.upateButton).startAnimation(circle_anim);  //开始动画
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        final File file = ZMUtil.downLoadFile(v.download_link, activity);
+                                                        activity.runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                if (file != null)
+                                                                    ZMUtil.openFile(activity, file);
+                                                                else {
+                                                                    activity.findViewById(R.id.upateButton).clearAnimation();
+                                                                    Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "更新失败！", Snackbar.LENGTH_LONG).show();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }).start();*/
                                                 Uri uri = Uri.parse(v.download_link);
                                                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                                 activity.startActivity(intent);
@@ -562,5 +585,77 @@ public class ZMUtil {
                 });
             }
         }).start();
+    }
+
+    public static File downLoadFile(String httpUrl, Activity activity) {
+        String dirName = Environment.getExternalStorageDirectory() + "/Downloads/";
+        File file = new File(dirName);
+        //不存在创建
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        //下载后的文件名
+        String fileName = dirName + "tiku.apk";
+        File file1 = new File(fileName);
+        if (file1.exists()) {
+            file1.delete();
+        }
+
+        try {
+            URL url = new URL(httpUrl);
+            try {
+                HttpURLConnection conn = (HttpURLConnection) url
+                        .openConnection();
+                InputStream is = conn.getInputStream();
+                FileOutputStream fos = new FileOutputStream(file1);
+                byte[] buf = new byte[256];
+                conn.connect();
+                double count = 0;
+                if (conn.getResponseCode() >= 400) {
+                    Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "连接超时，更新失败！", Snackbar.LENGTH_LONG).show();
+                    return null;
+                } else {
+                    while (count <= 100) {
+                        if (is != null) {
+                            int numRead = is.read(buf);
+                            if (numRead <= 0) {
+                                break;
+                            } else {
+                                fos.write(buf, 0, numRead);
+                            }
+
+                        } else {
+                            break;
+                        }
+
+                    }
+                }
+
+                conn.disconnect();
+                fos.close();
+                is.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+
+                e.printStackTrace();
+            }
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+
+            e.printStackTrace();
+        }
+
+        return file1;
+    }
+
+    private static void openFile(Activity activity, File file) {
+        // TODO Auto-generated method stub
+        Log.e("OpenFile", file.getAbsolutePath());
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file),
+                "application/vnd.android.package-archive");
+        activity.startActivity(intent);
     }
 }
