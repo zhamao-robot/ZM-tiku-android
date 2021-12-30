@@ -243,6 +243,16 @@ public class SelectBank extends AppCompatActivity {
                             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(SelectBank.this).toBundle());
                         }
                         break;
+                    case "查看公告":
+                        SharedPreferences title = getSharedPreferences("notify", Context.MODE_PRIVATE);
+                        String rTitle = title.getString("title", "暂无公告");
+                        String rContent = title.getString("content", "暂无公告");
+                        ZMUtil.showDialog(SelectBank.this, rTitle, rContent, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        break;
                     default:
                         Snackbar.make(findViewById(R.id.fragment_container), "这个功能下个版本就有啦！", Snackbar.LENGTH_LONG).show();
                         break;

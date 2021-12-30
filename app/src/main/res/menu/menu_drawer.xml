@@ -29,6 +29,10 @@
                 android:id="@+id/nav_feedback"
                 android:icon="@drawable/ic_feedback_black_24dp"
                 android:title="反馈" />
+            <item
+                android:id="@+id/nav_notify"
+                android:icon="@drawable/ic_autorenew_black_24dp"
+                android:title="查看公告" />
         </menu>
     </item>
 

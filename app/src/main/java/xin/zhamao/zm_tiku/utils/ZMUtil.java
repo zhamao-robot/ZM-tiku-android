@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
@@ -40,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.object.TikuNotification;
 import xin.zhamao.zm_tiku.object.TikuVersion;
 import xin.zhamao.zm_tiku.view.SelectBank;
 
@@ -216,6 +218,103 @@ public class ZMUtil {
         }
     }
 
+    public static void getNotification(final Activity activity) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection connection = null;
+                BufferedReader reader = null;
+                try {
+                    URL url = new URL("https://api.zhamao.xin/tiku-app?tiku_api=notify");
+                    connection = (HttpURLConnection) url.openConnection();
+                    //设置请求方法
+                    connection.setRequestMethod("POST");
+                    //设置连接超时时间（毫秒）
+                    connection.setConnectTimeout(5000);
+                    //设置读取超时时间（毫秒）
+                    connection.setReadTimeout(5000);
+
+                    connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+                    String data = "SystemVersion=" + URLEncoder.encode(android.os.Build.VERSION.RELEASE, "utf-8") + //获取当前手机系统版本号
+                            "&SystemModel=" + URLEncoder.encode(android.os.Build.MODEL, "utf-8") + //获取手机型号
+                            "&DeviceBrand=" + URLEncoder.encode(android.os.Build.MODEL, "utf-8") + //获取手机厂商
+                            "&SystemLanguage=" + URLEncoder.encode(Locale.getDefault().getLanguage(), "utf-8") +  //获取语言
+                            "&AndroidID=" + URLEncoder.encode(Settings.System.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID), "utf-8");
+
+                    //3设置给服务器写的数据的长度
+                    connection.setRequestProperty("Content-Length", String.valueOf(data.length()));
+
+                    //4指定要给服务器写数据
+                    connection.setDoOutput(true);
+
+                    //5开始向服务器写数据
+                    connection.getOutputStream().write(data.getBytes());
+
+                    int code = connection.getResponseCode();
+                    if (code != 200) throw new IOException("返回值不是200！");
+
+//返回输入流
+                    InputStream in = connection.getInputStream();
+
+                    //读取输入流
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        result.append(line);
+                    }
+                    Gson gson = new Gson();
+                    final TikuNotification v = gson.fromJson(result.toString(), TikuNotification.class);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ZMUtil.showDialog(activity, v.title, v.content, new DialogInterface.OnClickListener(){
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } catch (IOException e) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ZMUtil.showDialog(activity, "出错啦！", "网络出现问题，请稍后再试！", new DialogInterface.OnClickListener(){
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                    e.printStackTrace();
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (connection != null) {//关闭连接
+                        connection.disconnect();
+                    }
+                }
+            }
+        });
+    }
+
     public static void submitFeedback(final Activity activity,
                                       final String contact,
                                       final String title,
@@ -389,13 +488,18 @@ public class ZMUtil {
         String commit_msg;
         String tiku_version;
         Map<String, String> tiku_download_link;
+        String notify_title;
+        String notify_content;
     }
 
     private static void compareUpdate(final Activity activity, String internet_ver) {
         try {
             Gson gson = new Gson();
             final TikuApiVersion v = gson.fromJson(internet_ver, TikuApiVersion.class);
-
+            SharedPreferences.Editor editor = activity.getSharedPreferences("notify", Context.MODE_PRIVATE).edit();
+            editor.putString("title", v.notify_title);
+            editor.putString("content", v.notify_content);
+            editor.apply();
             PackageInfo packageInfo = activity.getApplicationContext()
                     .getPackageManager()
                     .getPackageInfo(activity.getPackageName(), 0);
@@ -587,75 +691,4 @@ public class ZMUtil {
         }).start();
     }
 
-    public static File downLoadFile(String httpUrl, Activity activity) {
-        String dirName = Environment.getExternalStorageDirectory() + "/Downloads/";
-        File file = new File(dirName);
-        //不存在创建
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        //下载后的文件名
-        String fileName = dirName + "tiku.apk";
-        File file1 = new File(fileName);
-        if (file1.exists()) {
-            file1.delete();
-        }
-
-        try {
-            URL url = new URL(httpUrl);
-            try {
-                HttpURLConnection conn = (HttpURLConnection) url
-                        .openConnection();
-                InputStream is = conn.getInputStream();
-                FileOutputStream fos = new FileOutputStream(file1);
-                byte[] buf = new byte[256];
-                conn.connect();
-                double count = 0;
-                if (conn.getResponseCode() >= 400) {
-                    Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "连接超时，更新失败！", Snackbar.LENGTH_LONG).show();
-                    return null;
-                } else {
-                    while (count <= 100) {
-                        if (is != null) {
-                            int numRead = is.read(buf);
-                            if (numRead <= 0) {
-                                break;
-                            } else {
-                                fos.write(buf, 0, numRead);
-                            }
-
-                        } else {
-                            break;
-                        }
-
-                    }
-                }
-
-                conn.disconnect();
-                fos.close();
-                is.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-
-                e.printStackTrace();
-            }
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-
-            e.printStackTrace();
-        }
-
-        return file1;
-    }
-
-    private static void openFile(Activity activity, File file) {
-        // TODO Auto-generated method stub
-        Log.e("OpenFile", file.getAbsolutePath());
-        Intent intent = new Intent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setAction(android.content.Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file),
-                "application/vnd.android.package-archive");
-        activity.startActivity(intent);
-    }
 }

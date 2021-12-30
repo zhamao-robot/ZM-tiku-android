@@ -1,5 +1,5 @@
 {
-    "version_name": "2021.6.21.1",
+    "version_name": "2021.12.31.1",
     "tiku_list": [
         "history",
         "makesi",
@@ -8,5 +8,5 @@
         "maogai2"
     ],
     "tiku_hash": "yes",
-    "version": "2021.5"
+    "version": "2021.12"
 }

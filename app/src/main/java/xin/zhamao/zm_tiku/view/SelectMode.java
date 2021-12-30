@@ -54,41 +54,6 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_mode);
 
-        TextView progressText = findViewById(R.id.progressText);
-        progressText.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                final EditText text = new EditText(SelectMode.this);
-                text.setInputType(InputType.TYPE_CLASS_NUMBER);
-                new MaterialAlertDialogBuilder(SelectMode.this)
-                        .setTitle("从指定题号开始做题")
-                        .setView(text)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // 获取输入框的内容
-                                int s = Integer.parseInt(text.getText().toString().trim());
-                                if (s >= info.count || s < 0) {
-                                    Snackbar.make(findViewById(R.id.ConstraintLayout), "题目id必须是 0 ~ " + (info.count - 1), Snackbar.LENGTH_LONG).show();
-                                } else {
-                                    QBSection section = qb.getQBData(qb.getUserId(), qb_name);
-                                    section.current_ans = s;
-                                    section.commitChange(qb.getDB());
-                                    updatePageInfo();
-                                }
-
-                                //dialog.dismiss();
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-                return true;
-            }
-        });
         //初始化QB
         qb = new QB(this);
         qb_name = QB.getTikuName(Objects.requireNonNull(getIntent().getStringExtra("qb_name")));
@@ -134,10 +99,40 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.arrowImage:
+                Snackbar.make(findViewById(R.id.ConstraintLayout), "我是箭头", Snackbar.LENGTH_SHORT).show();
+                break;
             case R.id.progressText:
+                final EditText text = new EditText(SelectMode.this);
+                text.setInputType(InputType.TYPE_CLASS_NUMBER);
+                new MaterialAlertDialogBuilder(SelectMode.this)
+                        .setTitle("从指定题号开始做题 [1-" + info.count + "]")
+                        .setView(text)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 获取输入框的内容
+                                int s = Integer.parseInt(text.getText().toString().trim());
+                                if (s > info.count || s <= 0) {
+                                    Snackbar.make(findViewById(R.id.ConstraintLayout), "题目id必须是 1 ~ " + info.count, Snackbar.LENGTH_LONG).show();
+                                } else {
+                                    QBSection section = qb.getQBData(qb.getUserId(), qb_name);
+                                    section.current_ans = s - 1;
+                                    section.commitChange(qb.getDB());
+                                    updatePageInfo();
+                                }
+
+                                //dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
             case R.id.doExamButton:
-
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
                 intent.putExtra("qb_name", qb_name); //题库名称
                 intent.putExtra("shuffle", shuffleSwitch.isChecked());
