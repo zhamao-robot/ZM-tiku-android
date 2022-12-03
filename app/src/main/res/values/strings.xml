@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">炸毛题库</string>
     <string name="title_activity_test_bank">TestBank</string>
-    <string name="copyright">Copyright © 2018–2021 CrazyBot Team. All rights reserved.</string>
+    <string name="copyright">Copyright © 2018–2022 CrazyBot Team. All rights reserved.</string>
     <string name="default_version">应用版本：0.0.1</string>
     <string name="default_tiku_version">题库版本：1970.1.1.1</string>
     <string name="user_service">用户协议</string>
