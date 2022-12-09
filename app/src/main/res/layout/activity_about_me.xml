@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="炸毛题库 Android版"
+        android:text="@string/androidName"
         android:textColor="@color/primaryTextColor"
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@+id/logoImage"

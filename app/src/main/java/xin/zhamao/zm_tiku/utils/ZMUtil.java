@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -25,7 +24,6 @@ import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,12 +41,16 @@ import java.util.Map;
 import xin.zhamao.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.TikuNotification;
 import xin.zhamao.zm_tiku.object.TikuVersion;
-import xin.zhamao.zm_tiku.view.SelectBank;
 
 
 public class ZMUtil {
 
     public static final int API_VER = 1;
+
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
 
     public static String loadResource(Context context, String file_name) {
         if (null == context || null == file_name) return null;
@@ -70,36 +72,6 @@ public class ZMUtil {
         }
     }
 
-    public static String loadInternalFile(Context context, String file_name) {
-        String res = "";
-        try {
-            FileInputStream fin = context.openFileInput(file_name);
-
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = fin.read(buffer)) != -1) {
-                output.write(buffer, 0, len);
-            }
-            output.close();
-            fin.close();
-            res = output.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-
-    public static TikuVersion getTikuVersion(Context context) {
-        String filename = "version.json";
-        String file = loadInternalFile(context, filename);
-        Log.w("ZMUtil", file);
-        Gson gson = new Gson();
-        TikuVersion v = new TikuVersion();
-        v = gson.fromJson(file, TikuVersion.class);
-        return v;
-    }
 
     public static String implode(String del, List<String> list) {
         StringBuilder p = new StringBuilder();
@@ -185,33 +157,6 @@ public class ZMUtil {
                     inputStream.close();
                     fos.close();
                 }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 将文件从assets目录，考贝到 /data/data/包名/files/ 目录中。assets 目录中的文件，会不经压缩打包至APK包中，使用时还应从apk包中导出来
-     *
-     * @param fileName 文件名,如aaa.txt
-     */
-    public static void copyAssetsFile2Phone(Activity activity, String fileName) {
-        try {
-            InputStream inputStream = activity.getAssets().open("tiku/" + fileName);
-            //getFilesDir() 获得当前APP的安装路径 /data/data/包名/files 目录
-            File file = new File(activity.getFilesDir().getAbsolutePath() + File.separator + fileName);
-            file.delete();
-            if (!file.exists() || file.length() == 0) {
-                FileOutputStream fos = new FileOutputStream(file);//如果文件不存在，FileOutputStream会自动创建文件
-                int len = -1;
-                byte[] buffer = new byte[1024];
-                while ((len = inputStream.read(buffer)) != -1) {
-                    fos.write(buffer, 0, len);
-                }
-                fos.flush();//刷新缓存区
-                inputStream.close();
-                fos.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -486,8 +431,6 @@ public class ZMUtil {
         String latest_version;
         String download_link;
         String commit_msg;
-        String tiku_version;
-        Map<String, String> tiku_download_link;
         String notify_title;
         String notify_content;
     }
@@ -504,7 +447,7 @@ public class ZMUtil {
                     .getPackageManager()
                     .getPackageInfo(activity.getPackageName(), 0);
             if (!v.latest_version.equals(packageInfo.versionName)) {
-                Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "App有新版本：" + v.latest_version, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(activity.findViewById(R.id.appBar), "App有新版本：" + v.latest_version, Snackbar.LENGTH_LONG).show();
                 Handler startMainActivity = new Handler();
                 startMainActivity.postDelayed(new Runnable() {
                     @Override
@@ -519,28 +462,6 @@ public class ZMUtil {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                /*// TODO：切换为App内下载更新
-                                                Animation circle_anim = AnimationUtils.loadAnimation(activity, R.anim.rotate);
-                                                LinearInterpolator interpolator = new LinearInterpolator();  //设置匀速旋转，在xml文件中设置会出现卡顿
-                                                circle_anim.setInterpolator(interpolator);
-                                                activity.findViewById(R.id.upateButton).startAnimation(circle_anim);  //开始动画
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        final File file = ZMUtil.downLoadFile(v.download_link, activity);
-                                                        activity.runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                if (file != null)
-                                                                    ZMUtil.openFile(activity, file);
-                                                                else {
-                                                                    activity.findViewById(R.id.upateButton).clearAnimation();
-                                                                    Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "更新失败！", Snackbar.LENGTH_LONG).show();
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                }).start();*/
                                                 Uri uri = Uri.parse(v.download_link);
                                                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                                                 activity.startActivity(intent);
@@ -561,9 +482,9 @@ public class ZMUtil {
             } else /*if (v.tiku_version.equals(getTikuVersion(activity).version_name))*/ { //题库是最新版
             }
         } catch (JsonSyntaxException e) {
-            Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "更新服务器出错啦！请联系开发者！", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(activity.findViewById(R.id.appBar), "更新服务器出错啦！请联系开发者！", Snackbar.LENGTH_LONG).show();
         } catch (PackageManager.NameNotFoundException e) {
-            Snackbar.make(activity.findViewById(R.id.ConstraintLayout), "App出错啦！请联系开发者！", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(activity.findViewById(R.id.appBar), "App出错啦！请联系开发者！", Snackbar.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
@@ -578,117 +499,6 @@ public class ZMUtil {
                 .setTitle(title)
                 .setPositiveButton("确定", positiveListener)
                 .setNegativeButton("取消", negativeListener).create().show();
-    }
-
-    public static void updateTiku(final Activity activity, final String path, final TikuApiVersion version) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                OutputStream output = null;
-                try {
-                    TikuVersion ver = new TikuVersion();
-                    ver.version_name = version.tiku_version;
-                    ver.tiku_hash = "";
-                    ver.tiku_list = new ArrayList<>();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(ver);
-                    File file = new File(path + File.separator + "version.json");
-                    if (file.exists()) {
-                        file.delete();
-                        file = new File(path + File.separator + "version.json");
-                    }
-                    FileOutputStream outStream = new FileOutputStream(file);
-                    outStream.write(json.getBytes());
-                    outStream.close();
-
-                    for (final Map.Entry<String, String> entry : version.tiku_download_link.entrySet()) {
-                        URL url = new URL(entry.getValue());
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        conn.setRequestMethod("GET");
-                        conn.setConnectTimeout(7 * 1000); //6秒
-                        InputStream input = conn.getInputStream();
-                        file = new File(path + File.separator + entry.getKey() + ".json");
-                        String p = path + File.separator + entry.getKey() + ".json";
-                        if (file.exists()) {
-                            file.delete();
-                            file = new File(path + File.separator + entry.getKey() + ".json");
-                        }
-                        output = new FileOutputStream(file);
-                        byte[] buffer = new byte[4 * 1024];
-                        while (input.read(buffer) != -1) {
-                            output.write(buffer);
-                            output.flush();
-                        }
-                        output.close();
-                        Log.i("ZMUtil", "成功写入" + entry.getKey() + "题库的文件");
-                        System.out.println("Getting " + entry.getKey());
-                        System.out.print(ZMUtil.loadInternalFile(activity, entry.getKey() + ".json"));
-                    }
-                } catch (MalformedURLException ex) {
-                    ex.printStackTrace();
-                    showError();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    showError();
-                } finally {
-                    try {
-                        output.close();
-                        showSuccess();
-                    } catch (IOException e) {
-                        System.out.println("fail");
-                        e.printStackTrace();
-                        showError();
-                    }
-                }
-            }
-
-            private void showSuccess() {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.findViewById(R.id.upateButton).clearAnimation();
-                        QB qb = new QB(activity);
-                        qb.getDB().queryQB("DELETE FROM qb", new String[]{});
-                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
-                        builder.setTitle("成功更新题库");
-                        builder.setMessage("点击确定关闭应用，之后重新打开App即完成更新题库！");
-                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                activity.finishAndRemoveTask();
-                            }
-                        });
-                        builder.create().show();
-
-                    }
-                });
-            }
-
-            private void showError() {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.findViewById(R.id.upateButton).clearAnimation();
-                        makeDialog(activity, "哎呀，出错啦！", "下载题库失败，请重试！如果遇到应用崩溃，进入设置清除数据即可", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                copyAssetsFile2Phone(activity, "politics.json");
-                                copyAssetsFile2Phone(activity, "maogai.json");
-                                copyAssetsFile2Phone(activity, "maogai2.json");
-                                copyAssetsFile2Phone(activity, "history.json");
-                                copyAssetsFile2Phone(activity, "makesi.json");
-                                copyAssetsFile2Phone(activity, "version.json");
-                            }
-                        }, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                    }
-                });
-            }
-        }).start();
     }
 
 }

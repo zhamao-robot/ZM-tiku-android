@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ConstraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context="xin.zhamao.zm_tiku.view.SelectMode">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -25,7 +23,7 @@
                 android:id="@+id/toolBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/ToolBarTheme"></com.google.android.material.appbar.MaterialToolbar>
+                android:theme="@style/ToolBarTheme" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -60,7 +58,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:onClick="onClick"
-                    android:text="7 / 14"
+                    android:text=""
                     android:textColor="@color/primaryTextColor"
                     android:textSize="32sp"
                     android:textStyle="bold" />
@@ -83,14 +81,32 @@
                         android:textColor="@color/primaryTextColor"
                         android:textSize="20sp" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/arrowImage"
+                            android:layout_width="0dp"
+                            android:layout_height="28dp"
+                            android:layout_weight="1"
+                            android:color="@color/accent"
+                            app:srcCompat="@drawable/ic_info_outline_black_24dp" />
+                        <TextView
+                            android:id="@+id/tikuVersionText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="28dp"
+                            android:lineHeight="28dp"
+                            android:gravity="center_vertical|start"
+                            android:layout_marginEnd="12dp"
+                            android:text="题库版本: 2022.12.5"
+                            tools:targetApi="p" />
+                    </LinearLayout>
+
                     <ImageView
-                        android:id="@+id/arrowImage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:color="@color/primary_dark"
                         app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
-
 
                 </LinearLayout>
 

@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -30,7 +32,6 @@ public class Feedback extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         final Map<String, String> extra = new LinkedHashMap<>();
         if(getIntent().getStringExtra("qb_name") != null) extra.put("qb_name", getIntent().getStringExtra("qb_name"));
-        if(getIntent().getStringExtra("tiku_version") != null) extra.put("tiku_version", getIntent().getStringExtra("tiku_version"));
         if(getIntent().getStringExtra("tiku_id") != null) extra.put("tiku_id", getIntent().getStringExtra("tiku_id"));
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

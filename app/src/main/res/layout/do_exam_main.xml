@@ -223,6 +223,45 @@
                 android:text="" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/answerLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="onClick"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/answerLayout5">
+
+            <TextView
+                android:id="@+id/answerLabel6"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/circle"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/primary"
+                android:text="F"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/answerText6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/primaryTextColor"
+                android:text="" />
+        </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submitButton"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
@@ -236,7 +275,7 @@
             android:text="提交"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/answerLayout5" />
+            app:layout_constraintTop_toBottomOf="@+id/answerLayout6" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"

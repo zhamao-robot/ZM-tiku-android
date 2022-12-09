@@ -11,13 +11,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -27,12 +24,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.githang.statusbar.StatusBarCompat;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -41,9 +37,13 @@ import com.google.gson.Gson;
 
 import java.io.File;
 
+import xin.zhamao.zhamao.zm_tiku.BuildConfig;
 import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.components.DialogUI;
 import xin.zhamao.zm_tiku.object.TikuVersion;
+import xin.zhamao.zm_tiku.utils.FileSystem;
 import xin.zhamao.zm_tiku.utils.QB;
+import xin.zhamao.zm_tiku.utils.TikuManager;
 import xin.zhamao.zm_tiku.utils.ZMUtil;
 
 public class SelectBank extends AppCompatActivity {
@@ -51,112 +51,51 @@ public class SelectBank extends AppCompatActivity {
     public static boolean isUpdateActivated = false;
     private long mExitTime;
     private long last_update = 0;
+    private DialogUI dialogUI;
 
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
-
         Window window = getWindow();
+        this.dialogUI = new DialogUI(this);
 
         int statusColor = R.color.green;
 
         //取消状态栏透明
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
+        // 设置悬浮的更新按钮
         final FloatingActionButton updateButton = findViewById(R.id.upateButton);
         updateButton.show();
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        //如果本地题库损坏或者本地还没拉题库，则从Asset拉取题库文件
-        String file_path = getFilesDir().getAbsolutePath() + "/";
-        File fil = new File(file_path + "version.json");
-        if (!fil.exists()) {
-            ZMUtil.copyAssetsFile2Phone(this, "history.json");
-            ZMUtil.copyAssetsFile2Phone(this, "politics.json");
-            ZMUtil.copyAssetsFile2Phone(this, "maogai.json");
-            ZMUtil.copyAssetsFile2Phone(this, "makesi.json");
-            ZMUtil.copyAssetsFile2Phone(this, "maogai2.json");
-            ZMUtil.copyAssetsFile2Phone(this, "version.json");
-            Snackbar.make(findViewById(R.id.fragment_container), "成功导入题库 !", Snackbar.LENGTH_LONG).show();
-            baseCheckUpdate();
-        } else {
-            String json = ZMUtil.loadInternalFile(this, "version.json");
-            Gson gson = new Gson();
-            TikuVersion ver = gson.fromJson(json, TikuVersion.class);
-            String asset = ZMUtil.loadResource(this, "tiku/version.json");
-            final TikuVersion ass_ver = gson.fromJson(asset, TikuVersion.class);
-            if (!ver.version_name.equals(ass_ver.version_name)) {
-                SharedPreferences pref = getSharedPreferences("qb_update", Context.MODE_PRIVATE);
-                final PackageInfo packageInfo;
-                try {
-                    packageInfo = this.getApplicationContext()
-                            .getPackageManager()
-                            .getPackageInfo(this.getPackageName(), 0);
-                    //Snackbar.make(findViewById(R.id.fragment_container), pref.getString("current_version", "0.1"), Snackbar.LENGTH_LONG).show();
-                    if (!pref.getString("current_version", "0.1").equals(packageInfo.versionName)) {
-                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-                        builder.setTitle("检测到题库App中题库有更新");
-                        builder.setMessage("原来的题库版本是 " + ver.version_name + "，新版题库版本是 " + ass_ver.version_name + "，是否更新内置题库？"
-                         + (ass_ver.tiku_hash.equals("no") ? "本次更新题库不会重置进度" : "本次更新题库会重置题库进度且不可恢复！")
-                                );
-                        builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "history.json");
-                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "politics.json");
-                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "maogai.json");
-                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "maogai2.json");
-                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "makesi.json");
-                                ZMUtil.copyAssetsFile2Phone(SelectBank.this, "version.json");
-                                Snackbar.make(findViewById(R.id.fragment_container), "成功更新题库到 " + ass_ver.version_name + " !", Snackbar.LENGTH_LONG).show();
-                                SharedPreferences.Editor editor = getSharedPreferences("qb_update", Context.MODE_PRIVATE).edit();
-                                editor.putString("current_version", packageInfo.versionName);
-                                editor.apply();
-                                if(!ass_ver.tiku_hash.equals("no")) {
-                                    QB qb = new QB(SelectBank.this);
-                                    qb.getDB().queryQB("DELETE FROM qb", new String[]{});
-                                    getSharedPreferences("qb_cache_politics", Context.MODE_PRIVATE).edit().clear().apply();
-                                    getSharedPreferences("qb_cache_history", Context.MODE_PRIVATE).edit().clear().apply();
-                                    getSharedPreferences("qb_cache_maogai", Context.MODE_PRIVATE).edit().clear().apply();
-                                    getSharedPreferences("qb_cache_makesi", Context.MODE_PRIVATE).edit().clear().apply();
-                                    getSharedPreferences("qb_cache_maogai2", Context.MODE_PRIVATE).edit().clear().apply();
-                                }
-                                baseCheckUpdate();
-                            }
-                        });
-                        builder.setNeutralButton("不再提示", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SharedPreferences.Editor editor = getSharedPreferences("qb_update", Context.MODE_PRIVATE).edit();
-                                editor.putString("current_version", packageInfo.versionName);
-                                editor.apply();
-                                Snackbar.make(findViewById(R.id.fragment_container), "忽略更新题库", Snackbar.LENGTH_LONG).show();
-                                baseCheckUpdate();
-                            }
-                        });
-                        builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                baseCheckUpdate();
-                            }
-                        });
-                        builder.create().show();
-                    } else {
-                        baseCheckUpdate();
-                    }
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                baseCheckUpdate();
-            }
 
+        // 设置抽屉
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        // 存在 version.json，表明是1.6.x及以下版本的，存在问题，需要重置所有数据再启动
+        if (FileSystem.isInternalFileExists(this, "version.json")) {
+            dialogUI.showRestoreConfirmDialog("此次覆盖更新需要重置题库数据，且不可恢复！", "点击确定将重置，并退出 App。否则请立即退出 App 并安装旧版。", false);
+            return;
         }
 
+        // 初始化题库
+        TikuManager tikuManager = new TikuManager(this);
+        int importCnt = tikuManager.initTiku();
+        if (importCnt != 0) {
+            Snackbar.make(findViewById(R.id.appBar), "已加载 " + importCnt + " 个题库！", Snackbar.LENGTH_LONG).show();
+        }
+
+        // 如果有题库已经存在，且版本不一致，就弹出询问是否更新
+        if (tikuManager.isNeedUpdate() && !getSharedPreferences("settings", 0).getBoolean("no_update_dialog", false)) {
+            dialogUI.showTikuUpdateDialog("以下题库有更新，请根据需求进行更新", dialogUI.makeUpdateListLayout(tikuManager));
+        }
+
+        if (!BuildConfig.DEBUG) {
+            baseCheckUpdate();
+        }
 
         Toolbar toolbar = findViewById(R.id.toolBar);
-        toolbar.setTitle("选择题库");
+        toolbar.setTitle("选择题库" + (BuildConfig.DEBUG ? "(调试模式)" : ""));
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -174,14 +113,6 @@ public class SelectBank extends AppCompatActivity {
         fragmentTransaction.commit();
 
         updateButton.setOnClickListener(new OnClickUpdateListener());
-        updateButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                TikuVersion ver = ZMUtil.getTikuVersion(SelectBank.this);
-                Snackbar.make(findViewById(R.id.fragment_container), "题库当前版本：" + ver.version_name, Snackbar.LENGTH_SHORT).show();
-                return true;
-            }
-        });
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_do_exam);
@@ -227,7 +158,6 @@ public class SelectBank extends AppCompatActivity {
                     }
                     case "反馈": {
                         Intent intent = new Intent(SelectBank.this, Feedback.class);
-                        intent.putExtra("tiku_version", ZMUtil.getTikuVersion(SelectBank.this).version_name);
                         if (android.os.Build.VERSION.SDK_INT < 26) {
                             startActivity(intent);
                         } else {
@@ -303,14 +233,14 @@ public class SelectBank extends AppCompatActivity {
                 public void run() {
                     v.clearAnimation();
                     isUpdateActivated = false;
-                    Snackbar.make(findViewById(R.id.ConstraintLayout), "检查更新完毕", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.appBar), "检查更新完毕", Snackbar.LENGTH_LONG).show();
                 }
             }, new Runnable() {
                 @Override
                 public void run() {
                     v.clearAnimation();
                     isUpdateActivated = false;
-                    Snackbar.make(findViewById(R.id.fragment_container), "更新失败，请检查你的网络设置！", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.appBar), "更新失败，请检查你的网络设置！", Snackbar.LENGTH_LONG).show();
                     last_update -= 10;
                 }
             });

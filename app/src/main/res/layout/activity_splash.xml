@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="炸毛刷题 Android版"
+        android:text="@string/androidName"
         android:textColor="@color/primaryTextColor"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

@@ -21,6 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import xin.zhamao.zm_tiku.object.JudgeResult;
 import xin.zhamao.zm_tiku.object.QBSection;
 import xin.zhamao.zm_tiku.object.TikuDisplaySection;
+import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.object.TikuSection;
 import xin.zhamao.zm_tiku.object.UserInfo;
 import xin.zhamao.zm_tiku.value.StatusCode;
@@ -44,48 +45,6 @@ public class QB {
     }
 
     /**
-     * 获取题库中文/英文名字
-     *
-     * @param name 题库名字
-     * @return String|null
-     */
-    public static String getTikuName(String name) {
-        switch (name) {
-            case "history":
-                return "近代史题库";
-            case "politics":
-                return "思修题库";
-            case "maogai":
-                return "毛概题库";
-            case "maogai2":
-                return "毛概2题库";
-            case "makesi":
-                return "马克思题库";
-            case "test":
-                return "测试题库";
-            case "测试题库":
-                return "test";
-            case "近代史题库":
-            case "近代史":
-                return "history";
-            case "思修题库":
-            case "思修":
-                return "politics";
-            case "毛概题库":
-            case "毛概":
-                return "maogai";
-            case "毛概2题库":
-            case "毛概2":
-                return "maogai2";
-            case "马克思题库":
-            case "马克思":
-                return "makesi";
-            default:
-                return null;
-        }
-    }
-
-    /**
      * 转换字符串"BAdC" 为 "ABCD"
      *
      * @param str         答案字符串
@@ -100,11 +59,11 @@ public class QB {
         return sorted.toUpperCase();
     }
 
-    public Map<String, TikuSection> getTikuData(String qb_name) {
+    public Map<String, TikuSection> getTikuData(TikuMeta qb_meta) {
         Map<String, TikuSection> list = new LinkedHashMap<>();
         Gson gson = new Gson();
-        String tiku_data = ZMUtil.loadInternalFile(context,  qb_name + ".json");
-        System.out.println("Getting " + qb_name);
+        String tiku_data = FileSystem.loadInternalFile(context,  qb_meta.tiku_file);
+        System.out.println("Getting " + qb_meta.tiku_file);
         //System.out.print(tiku_data);
         JsonObject obj = (JsonObject) (new JsonParser()).parse(tiku_data);
         for (Map.Entry<String, JsonElement> map : obj.entrySet()) {
@@ -136,12 +95,12 @@ public class QB {
         });
     }
 
-    private List<Integer> generateDoingList(String qb_name, String rules) {
-        return generateDoingList(qb_name, rules, null);
+    private List<Integer> generateDoingList(TikuMeta meta, String rules) {
+        return generateDoingList(meta, rules, null);
     }
 
-    private List<Integer> generateDoingList(String qb_name, String rules, String user_id) {
-        Map<String, TikuSection> qb = getTikuData(qb_name);
+    private List<Integer> generateDoingList(TikuMeta meta, String rules, String user_id) {
+        Map<String, TikuSection> qb = getTikuData(meta);
         List<Integer> ls = new ArrayList<>();
         switch (rules) {
             case "normal":
@@ -152,7 +111,7 @@ public class QB {
             case "wrong":
             case "错题":
                 if (user_id == null) break;
-                QBSection userdata = getQBData(user_id, qb_name);
+                QBSection userdata = getQBData(user_id, meta.name);
                 if (userdata == null) break;
                 ls = userdata.getWrong();
                 break;
@@ -216,15 +175,15 @@ public class QB {
     }
 
     /**
-     * @param qb_name     题库名称
+     * @param qb_meta     题库名称
      * @param doing_list  正在做的列表
      * @param current_ans 当前的答案
      * @param shuffle     是否打乱选项顺序
      * @return TikuSection
      */
-    private TikuSection getQuestion(String qb_name, List<Integer> doing_list, int current_ans, boolean shuffle) {
+    private TikuSection getQuestion(TikuMeta qb_meta, List<Integer> doing_list, int current_ans, boolean shuffle) {
         try {
-            Map<String, TikuSection> qb = getTikuData(qb_name);
+            Map<String, TikuSection> qb = getTikuData(qb_meta);
             int t = doing_list.get(current_ans);
             TikuSection section = qb.get(Integer.toString(t));
             if (shuffle) { //打乱选项
@@ -265,16 +224,15 @@ public class QB {
         return new ArrayList<>();
     }
 
-    public UserInfo getInfo(String user_id, String qb_name) {
-        if (getTikuName(qb_name) == null) return null;
+    public UserInfo getInfo(String user_id, TikuMeta meta) {
         UserInfo res = new UserInfo();
-        List<QBSection> r = db.queryQB("SELECT * FROM qb WHERE user_id = ? AND qb_name = ?", new String[]{user_id, qb_name});
+        List<QBSection> r = db.queryQB("SELECT * FROM qb WHERE user_id = ? AND qb_name = ?", new String[]{user_id, meta.name});
 
         if (r.isEmpty()) {
             res.status = 0;
             res.mode = 0;
             res.shuffle = false;
-            res.count = getTikuData(qb_name).size();
+            res.count = getTikuData(meta).size();
             res.progress = 0;
         } else {
             QBSection rs = r.get(0);
@@ -284,7 +242,7 @@ public class QB {
             if (user.isEmpty()) res.shuffle = false;
             String shuffle = user.get("qb_shuffle");
             if (shuffle != null && !Objects.equals(shuffle, "")) res.shuffle = true;
-            res.count = rs.doing_list.size() == 0 ? getTikuData(qb_name).size() : rs.doing_list.size();
+            res.count = rs.doing_list.size() == 0 ? getTikuData(meta).size() : rs.doing_list.size();
             res.progress = rs.current_ans;
         }
         return res;
@@ -296,7 +254,8 @@ public class QB {
         List<QBSection> section_list = db.queryQB("SELECT * FROM qb WHERE user_id = ? AND doing = 1", new String[]{user_id});
         if (section_list.isEmpty()) return null;
         QBSection section = section_list.get(0);
-        TikuSection current_question = getQuestion(section.qb_name, section.doing_list, section.current_ans, false);
+        TikuMeta judgeMeta = TikuManager.findMetaByName(section.qb_name);
+        TikuSection current_question = getQuestion(judgeMeta, section.doing_list, section.current_ans, false);
         answer = getTrueAnswer(answer.trim(), current_question.answer_type);
         JudgeResult r = section.judge(this, current_question, answer);
         Log.i("QB", "Android判题：" + user_id + "(" + section.qb_name + ") " + (r.status ? "正确" : "错误"));
@@ -306,7 +265,7 @@ public class QB {
 
         if (next < section.doing_list.size()) {
             section.current_ans = next;
-            TikuSection question = getQuestion(section.qb_name, section.doing_list, next, shuffle);
+            TikuSection question = getQuestion(judgeMeta, section.doing_list, next, shuffle);
 
             if (shuffle) db.setUserShuffle(user_id, question.shuffle);
 
@@ -318,7 +277,7 @@ public class QB {
         } else {
             Map<String, String> res_message = new LinkedHashMap<>();
             res_message.put("title", "你已经做完了本轮题目啦！");
-            List<Integer> doing_list = generateDoingList(section.qb_name, "normal");
+            List<Integer> doing_list = generateDoingList(judgeMeta, "normal");
             String msg = "";
             if (section.qb_mode != 3) {
                 Integer right = section.right_count, total = section.answer_count;
@@ -351,19 +310,18 @@ public class QB {
         return r;
     }
 
-    public TikuDisplaySection next(String user_id, String qb_name, boolean shuffle) {
-        if (getTikuName(qb_name) == null) return null;
-        QBSection status = getQBData(user_id, qb_name);
-        if(status == null) insertQBData(user_id, qb_name);
-        status = getQBData(user_id, qb_name);
+    public TikuDisplaySection next(String user_id, TikuMeta qb_meta, boolean shuffle) {
+        QBSection status = getQBData(user_id, qb_meta.name);
+        if(status == null) insertQBData(user_id, qb_meta.name);
+        status = getQBData(user_id, qb_meta.name);
         if(status == null) return null;
         db.queryQB("UPDATE qb SET doing = 0 WHERE user_id = ?", new String[]{user_id});
         if(status.doing_list.isEmpty()) {
-            status.doing_list = generateDoingList(qb_name, "normal");
+            status.doing_list = generateDoingList(qb_meta, "normal");
         }
         status.doing = 1;
         int current_ans = status.current_ans;
-        TikuSection question = getQuestion(qb_name, status.doing_list, current_ans, shuffle);
+        TikuSection question = getQuestion(qb_meta, status.doing_list, current_ans, shuffle);
         if(shuffle)
             db.setUserShuffle(user_id, question.shuffle);
         else if (!getShuffleList(user_id).isEmpty())
@@ -378,18 +336,17 @@ public class QB {
         return res;
     }
 
-    public TikuDisplaySection changeMode(String user_id, String qb_name, int qb_mode, boolean shuffle) {
-        if(getTikuName(qb_name) == null) return null;
+    public TikuDisplaySection changeMode(String user_id, TikuMeta qb_meta, int qb_mode, boolean shuffle) {
         if(qb_mode > 7) qb_mode = 0;
         TikuDisplaySection res = new TikuDisplaySection();
         String qb_mode_name = convertModeName(qb_mode);
         if(qb_mode_name == null) return null;
-        List<Integer> doing_list = generateDoingList(qb_name, qb_mode_name, user_id);
+        List<Integer> doing_list = generateDoingList(qb_meta, qb_mode_name, user_id);
         if(doing_list.isEmpty()) {
             res.warning = StatusCode.no_wrong_question;
             return res;
         }
-        QBSection section = new QBSection(this, user_id, qb_name);
+        QBSection section = new QBSection(this, user_id, qb_meta.name);
         section.doing_list = doing_list;
         section.doing = 1;
         section.current_ans = 0;
@@ -397,7 +354,7 @@ public class QB {
         section.right_count = 0;
         section.qb_mode = qb_mode;
         section.commitChange();
-        TikuSection question = getQuestion(qb_name, doing_list, 0, shuffle);
+        TikuSection question = getQuestion(qb_meta, doing_list, 0, shuffle);
         if(shuffle)
             getDB().setUserShuffle(user_id, question.shuffle);
         else if (getShuffleList(user_id).isEmpty())
@@ -406,7 +363,7 @@ public class QB {
         res.question = question;
         res.id = doing_list.get(0);
         res.type = getQuestionTypeCH(question);
-        getQBCacheEditor(qb_name).clear().apply();
+        getQBCacheEditor(qb_meta.name).clear().apply();
         return res;
     }
 

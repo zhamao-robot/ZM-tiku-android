@@ -68,7 +68,7 @@
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
         android:drawablePadding="10dp"
-        android:hint="内容"
+        android:hint="内容(如果是题库相关，请说明是哪个题库)"
         android:paddingStart="8dp"
         android:inputType="textMultiLine"
         android:singleLine="true"
@@ -86,4 +86,5 @@
         android:text="提交"
         android:textColor="@android:color/white"
         android:textSize="18sp"/>
+
 </LinearLayout>

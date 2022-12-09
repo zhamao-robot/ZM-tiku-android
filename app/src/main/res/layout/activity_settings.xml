@@ -38,11 +38,50 @@
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
         android:switchMinWidth="156dp"
-        android:text="自动检查更新"
+        android:text="自动检查 App 更新"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBar"
         app:useMaterialThemeColors="false" />
+
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/ignoreUpdateSetting"
+        style="@style/Widget.MaterialComponents.CompoundButton.Switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:checked="false"
+        android:endColor="@color/primary"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        android:switchMinWidth="156dp"
+        android:text="启动时忽略题库更新"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/autoCheckSetting"
+        app:useMaterialThemeColors="false" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/restoreAll"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/ignoreUpdateSetting"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:gravity="start"
+        android:paddingBottom="16dp"
+        android:textSize="20sp"
+        android:endColor="@color/primary"
+        android:text="重置所有数据"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,9 @@ package xin.zhamao.zm_tiku.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,8 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -22,14 +26,16 @@ import java.util.Objects;
 
 import xin.zhamao.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.QBSection;
+import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.object.UserInfo;
 import xin.zhamao.zm_tiku.utils.QB;
+import xin.zhamao.zm_tiku.utils.TikuManager;
 
 public class SelectMode extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private int mode_selected_tmp = 0, mode_selected = 0;
 
-    private String qb_name;
+    private TikuMeta qb_meta;
 
     private QB qb = null;
 
@@ -56,7 +62,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
 
         //初始化QB
         qb = new QB(this);
-        qb_name = QB.getTikuName(Objects.requireNonNull(getIntent().getStringExtra("qb_name")));
+        qb_meta = TikuManager.metaMap.get(getIntent().getIntExtra("qb_view_id", -1));
 
         (shuffleSwitch = findViewById(R.id.shuffleSwitch)).setOnCheckedChangeListener(this);
         (autoNextSwitch = findViewById(R.id.autoNextSwitch)).setOnCheckedChangeListener(this);
@@ -71,14 +77,14 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 return true;
             }
         });*/
-        if (qb.getQBData(qb.getUserId(), qb_name) == null) {
-            qb.insertQBData(qb.getUserId(), qb_name);
+        if (qb.getQBData(qb.getUserId(), qb_meta.name) == null) {
+            qb.insertQBData(qb.getUserId(), qb_meta.name);
             //Toast.makeText(SelectMode.this, "插入数据中", Toast.LENGTH_LONG).show();
         }
 
         //设置 toolbar
         Toolbar toolbar = findViewById(R.id.toolBar);
-        toolbar.setTitle(QB.getTikuName(qb_name));
+        toolbar.setTitle(qb_meta.display_name);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -116,7 +122,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                                 if (s > info.count || s <= 0) {
                                     Snackbar.make(findViewById(R.id.ConstraintLayout), "题目id必须是 1 ~ " + info.count, Snackbar.LENGTH_LONG).show();
                                 } else {
-                                    QBSection section = qb.getQBData(qb.getUserId(), qb_name);
+                                    QBSection section = qb.getQBData(qb.getUserId(), qb_meta.name);
                                     section.current_ans = s - 1;
                                     section.commitChange(qb.getDB());
                                     updatePageInfo();
@@ -134,7 +140,7 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
                 break;
             case R.id.doExamButton:
                 Intent intent = new Intent(SelectMode.this, DoExam.class);
-                intent.putExtra("qb_name", qb_name); //题库名称
+                intent.putExtra("qb_view_id", getIntent().getIntExtra("qb_view_id", -1)); //题库名称
                 intent.putExtra("shuffle", shuffleSwitch.isChecked());
                 intent.putExtra("auto_skip", autoNextSwitch.isChecked());
                 intent.putExtra("qb_mode", info.mode);
@@ -187,18 +193,17 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.autoNextSwitch:
-                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "自动跳过已打开" : "自动跳过已关闭"), Snackbar.LENGTH_SHORT).show();
-                break;
-            case R.id.shuffleSwitch:
-                Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
-                break;
+        int id = buttonView.getId();
+        if (id == R.id.autoNextSwitch) {
+            Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "自动跳过已打开" : "自动跳过已关闭"), Snackbar.LENGTH_SHORT).show();
+        } else if (id == R.id.shuffleSwitch) {
+            Snackbar.make(findViewById(R.id.ConstraintLayout), (isChecked ? "打乱顺序已打开" : "打乱顺序已关闭"), Snackbar.LENGTH_SHORT).show();
         }
     }
 
+    @SuppressLint("SetTextI18n")
     public void updatePageInfo() {
-        info = qb.getInfo(qb.getUserId(), qb_name);
+        info = qb.getInfo(qb.getUserId(), qb_meta);
         //更新progress进度显示
         TextView progressText = findViewById(R.id.progressText);
         String progress = info.progress + " / " + info.count;
@@ -216,5 +221,6 @@ public class SelectMode extends AppCompatActivity implements View.OnClickListene
         currentModeText.setText(mode_list[info.mode]);
         TextView switchModeNameText = findViewById(R.id.switchModeNameText);
         switchModeNameText.setText(mode_list[info.mode]);
+        ((TextView)findViewById(R.id.tikuVersionText)).setText("题库版本: " + qb_meta.version);
     }
 }

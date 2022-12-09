@@ -40,9 +40,8 @@ public class AboutMe extends AppCompatActivity implements View.OnClickListener{
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        TikuVersion ver = ZMUtil.getTikuVersion(this);
-        TextView tiku_version = findViewById(R.id.tikuVersionText);
-        tiku_version.setText(String.format("题库版本：%s", ver.version_name));
+        TextView none = findViewById(R.id.tikuVersionText);
+        none.setText("");
 
         Toolbar toolbar = findViewById(R.id.toolBar);
         toolbar.setTitle("关于");

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "makesi",
+    "avatar": "@drawable/makesi",
+    "display_name": "马克思",
+    "tiku_file": "makesi.json",
+    "version": "2022.12.10",
+    "edit_version": 1
+  },
+  {
+    "name": "politics",
+    "avatar": "@drawable/politics",
+    "display_name": "思修",
+    "tiku_file": "politics.json",
+    "version": "2022.12.10",
+    "edit_version": 1
+  },
+  {
+    "name": "history",
+    "avatar": "@drawable/history",
+    "display_name": "近代史",
+    "tiku_file": "history.json",
+    "version": "2021.12.1",
+    "edit_version": 1
+  },
+  {
+    "name": "maogai",
+    "avatar": "@drawable/maogai",
+    "display_name": "毛概",
+    "tiku_file": "maogai.json",
+    "version": "2022.12.10",
+    "edit_version": 1
+  },
+  {
+    "name": "maogai2",
+    "avatar": "@drawable/maogai",
+    "display_name": "毛概二",
+    "tiku_file": "maogai2.json",
+    "version": "2021.12.1",
+    "edit_version": 1
+  },
+  {
+    "name": "xigai",
+    "avatar": "@drawable/xigai",
+    "display_name": "习概",
+    "tiku_file": "xigai.json",
+    "version": "2022.12.10",
+    "edit_version": 1
+  }
+]

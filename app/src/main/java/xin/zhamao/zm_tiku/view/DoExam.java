@@ -51,20 +51,22 @@ import xin.zhamao.zm_tiku.object.JudgeResult;
 import xin.zhamao.zm_tiku.object.QBCacheSection;
 import xin.zhamao.zm_tiku.object.QBSection;
 import xin.zhamao.zm_tiku.object.TikuDisplaySection;
+import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.object.UserInfo;
 import xin.zhamao.zm_tiku.utils.QB;
+import xin.zhamao.zm_tiku.utils.TikuManager;
 import xin.zhamao.zm_tiku.utils.ZMUtil;
 import xin.zhamao.zm_tiku.value.RoundBackgroundColorSpan;
 import xin.zhamao.zm_tiku.value.StatusCode;
 
 public class DoExam extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-    private String qb_name;
+    private TikuMeta qb_meta;
     private String user_id;
     private boolean shuffle;
     private boolean auto_skip;
 
-    private LinearLayout layout1, layout2, layout3, layout4, layout5, bottom_sheet_layout;
+    private LinearLayout layout1, layout2, layout3, layout4, layout5, layout6, bottom_sheet_layout;
     private TextView last_question_text, current_progress_text, next_question_text;
     private TextView question_view;
     private RecyclerView answer_sheet;
@@ -92,6 +94,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             case R.id.answerLayout3:
             case R.id.answerLayout4:
             case R.id.answerLayout5:
+            case R.id.answerLayout6:
                 if(tts == null) {
                     Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "TTS文本转语音系统库未找到！", Snackbar.LENGTH_LONG).show();
                 } else {
@@ -138,11 +141,13 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         setContentView(R.layout.do_exam);
 
         bind_ans = new LinkedHashMap<>();
+
         bind_ans.put(R.id.answerLayout1, "A");
         bind_ans.put(R.id.answerLayout2, "B");
         bind_ans.put(R.id.answerLayout3, "C");
         bind_ans.put(R.id.answerLayout4, "D");
         bind_ans.put(R.id.answerLayout5, "E");
+        bind_ans.put(R.id.answerLayout6, "F");
 
 
         submit_btn = findViewById(R.id.submitButton);
@@ -155,12 +160,14 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         layout3 = findViewById(R.id.answerLayout3);
         layout4 = findViewById(R.id.answerLayout4);
         layout5 = findViewById(R.id.answerLayout5);
+        layout6 = findViewById(R.id.answerLayout6);
 
         layout1.setOnLongClickListener(this);
         layout2.setOnLongClickListener(this);
         layout3.setOnLongClickListener(this);
         layout4.setOnLongClickListener(this);
         layout5.setOnLongClickListener(this);
+        layout6.setOnLongClickListener(this);
 
         TextView answerText1 = findViewById(R.id.answerText1);
         answerText1.getText().toString();
@@ -183,7 +190,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         answer_sheet = findViewById(R.id.answer_sheet);
         bind_view = new LinkedHashMap<>();
 
-        this.qb_name = this.getIntent().getStringExtra("qb_name");
+        this.qb_meta = TikuManager.metaMap.get(this.getIntent().getIntExtra("qb_view_id", -1));
         this.user_id = this.getIntent().getStringExtra("user_id");
         this.shuffle = this.getIntent().getBooleanExtra("shuffle", false);
         int qb_mode = this.getIntent().getIntExtra("qb_mode", 0);
@@ -191,9 +198,9 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         //Toast.makeText(this, "shuffle: " + this.shuffle + ", mode: " + qb_mode + ", skip: " + this.auto_skip, Toast.LENGTH_LONG).show();
         int change_mode = this.getIntent().getIntExtra("change_mode", -1);
         if (change_mode != -1) {
-            section = qb.changeMode(user_id, qb_name, change_mode, shuffle);
+            section = qb.changeMode(user_id, qb_meta, change_mode, shuffle);
         } else {
-            section = qb.next(user_id, qb_name, shuffle);
+            section = qb.next(user_id, qb_meta, shuffle);
         }
         if (section.warning == StatusCode.no_wrong_question) {
             final MaterialAlertDialogBuilder normalDialog =
@@ -213,7 +220,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
 
         //设置 toolbar
         Toolbar toolbar = findViewById(R.id.toolBar);
-        toolbar.setTitle(QB.getTikuName(qb_name));
+        toolbar.setTitle(qb_meta.display_name);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -261,15 +268,15 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         });
 
         UserInfo info;
-        info = qb.getInfo(qb.getUserId(), qb_name);
+        info = qb.getInfo(qb.getUserId(), qb_meta);
         questions_count = info.count;
 
         // 设置答题卡
         int[] answers = new int[questions_count];
-        QBSection qbSection = new QBSection(qb, qb.getUserId(), qb_name);
+        QBSection qbSection = new QBSection(qb, qb.getUserId(), qb_meta.name);
         int i;
         Gson gson = new Gson();
-        SharedPreferences pref = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("qb_cache_" + qb_meta.name, Context.MODE_PRIVATE);
         for (Map.Entry<String, ?> entry : pref.getAll().entrySet()) {
             QBCacheSection section = gson.fromJson((String) entry.getValue(), QBCacheSection.class);
             answers[Integer.parseInt(entry.getKey())] = section.real_choice.equals(section.user_choice) ? 2 : 1;
@@ -296,7 +303,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
      * @param section section
      */
     private void updateLastDisplayQuestion(QBCacheSection section) {
-        UserInfo info = qb.getInfo(qb.getUserId(), qb_name);
+        UserInfo info = qb.getInfo(qb.getUserId(), qb_meta);
         updateDisplayQuestionAnswer(
                 section.answer_type,
                 section.question,
@@ -334,11 +341,13 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
         layout3.setVisibility(View.GONE);
         layout4.setVisibility(View.GONE);
         layout5.setVisibility(View.GONE);
+        layout6.setVisibility(View.GONE);
         layout1.setEnabled(choice_enable);
         layout2.setEnabled(choice_enable);
         layout3.setEnabled(choice_enable);
         layout4.setEnabled(choice_enable);
         layout5.setEnabled(choice_enable);
+        layout6.setEnabled(choice_enable);
 
         submit_btn.setText(btn_text);
         current_progress_text.setText(progress_text);
@@ -383,6 +392,11 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                     ((TextView) findViewById(R.id.answerText5)).setText(entry.getValue());
                     bind_view.put(entry.getKey(), (TextView) findViewById(R.id.answerLabel5));
                     break;
+                case "F":
+                    layout6.setVisibility(View.VISIBLE);
+                    ((TextView) findViewById(R.id.answerText6)).setText(entry.getValue());
+                    bind_view.put(entry.getKey(), (TextView) findViewById(R.id.answerLabel6));
+                    break;
             }
             key_down.put(entry.getKey(), false);
         }
@@ -396,7 +410,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
     private void updateDisplayQuestion(TikuDisplaySection section) {
         this.section = section;
         UserInfo info;
-        info = qb.getInfo(qb.getUserId(), qb_name);
+        info = qb.getInfo(qb.getUserId(), qb_meta);
         String progress_text = "当前 " + info.progress + "/" + info.count;
         updateDisplayQuestionAnswer(
                 section.question.answer_type,
@@ -420,6 +434,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             case R.id.answerLayout3:
             case R.id.answerLayout4:
             case R.id.answerLayout5:
+            case R.id.answerLayout6:
                 onChoiceClick((LinearLayout) view, view.getId());
                 break;
             case R.id.last_question_text:
@@ -434,9 +449,9 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
     public void showNextQuestion() {
         if (next_question_text.getText().toString().equals("下一题")) {
             int list_id = view_id;
-            TikuDisplaySection doing_section = qb.next(qb.getUserId(), qb_name, shuffle);
+            TikuDisplaySection doing_section = qb.next(qb.getUserId(), qb_meta, shuffle);
             if (list_id < doing_section.list_id - 1) {
-                SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+                SharedPreferences p = getSharedPreferences("qb_cache_" + qb_meta.name, Context.MODE_PRIVATE);
                 String json = p.getString(Integer.toString(list_id + 1), "");
                 if (json.equals(""))
                     Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
@@ -452,13 +467,13 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                 }
             } else {
                 next_question_text.setText("反馈");
-                updateDisplayQuestion(qb.next(qb.getUserId(), qb_name, shuffle));
+                updateDisplayQuestion(qb.next(qb.getUserId(), qb_meta, shuffle));
             }
         } else if (next_question_text.getText().toString().equals("反馈")) {
             Intent intent = new Intent(DoExam.this, Feedback.class);
-            intent.putExtra("tiku_version", ZMUtil.getTikuVersion(DoExam.this).version_name);
-            intent.putExtra("qb_name", qb_name);
-            QBSection qbSection = qb.getQBData(qb.getUserId(), qb_name);
+            intent.putExtra("tiku_version", qb_meta.version + "_" + qb_meta.edit_version);
+            intent.putExtra("qb_name", qb_meta.name);
+            QBSection qbSection = qb.getQBData(qb.getUserId(), qb_meta.name);
             if (qbSection.doing_list.size() > view_id)
                 intent.putExtra("tiku_id", Integer.toString(qbSection.doing_list.get(view_id)));
             if (android.os.Build.VERSION.SDK_INT < 26) {
@@ -475,14 +490,14 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "没有上一题啦！", Snackbar.LENGTH_SHORT).show();
         } else {
 
-            SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+            SharedPreferences p = getSharedPreferences("qb_cache_" + qb_meta.name, Context.MODE_PRIVATE);
             String json = p.getString(Integer.toString(list_id - 1), "");
             Log.e("last_question", json);
             if (json.equals("")) {
-                QBSection section = qb.getQBData(qb.getUserId(), qb_name);
+                QBSection section = qb.getQBData(qb.getUserId(), qb_meta.name);
                 section.current_ans = list_id - 1;
                 section.commitChange(qb.getDB());
-                this.section = qb.next(user_id, qb_name, shuffle);
+                this.section = qb.next(user_id, qb_meta, shuffle);
                 updateDisplayQuestion(this.section);
             } else {
                 try {
@@ -514,7 +529,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             int type = section.question.answer_type;
             JudgeResult result = qb.judge(user_id, answer.toString());
             //将题目写入缓存，以便看错题本
-            setQBCache(qb_name, result.list_id, type, current_question, answer.toString(), result.right_answer, current_ans_list);
+            setQBCache(qb_meta.name, result.list_id, type, current_question, answer.toString(), result.right_answer, current_ans_list);
             for (Map.Entry<String, Boolean> entry : key_down.entrySet()) {
                 if (entry.getValue())
                     setAnswerColor((MaterialTextView) Objects.requireNonNull(bind_view.get(entry.getKey())), R.color.white, R.drawable.circle_red);
@@ -530,6 +545,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             layout3.setEnabled(false);
             layout4.setEnabled(false);
             layout5.setEnabled(false);
+            layout6.setEnabled(false);
 
             ((AnswerSheetAdapter) answer_sheet.getAdapter()).setItem(section.list_id, result.status ? 2 : 1);
 
@@ -541,7 +557,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                     }
                 });
                 //完成本轮题目后清除做题缓存。
-                qb.getQBCacheEditor(qb_name).clear().apply();
+                qb.getQBCacheEditor(qb_meta.name).clear().apply();
                 return;
             }
             if (result.status && auto_skip) {
@@ -552,7 +568,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateDisplayQuestion(qb.next(user_id, qb_name, shuffle));
+                                updateDisplayQuestion(qb.next(user_id, qb_meta, shuffle));
                             }
                         });
                     }
@@ -561,7 +577,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
                 //updateResourceTimer.cancel();
             }
         } else if (submit_btn.getText().equals("下一题") || submit_btn.getText().equals("回到当前")) {
-            updateDisplayQuestion(qb.next(user_id, qb_name, shuffle));
+            updateDisplayQuestion(qb.next(user_id, qb_meta, shuffle));
             next_question_text.setText("反馈");
         }
     }
@@ -667,7 +683,7 @@ public class DoExam extends AppCompatActivity implements View.OnClickListener, V
             public void onClick(View view) {
                 int position = Integer.valueOf(myTextView.getText().toString()) - 1;
                 if (mData[position] != 0) {
-                    SharedPreferences p = getSharedPreferences("qb_cache_" + qb_name, Context.MODE_PRIVATE);
+                    SharedPreferences p = getSharedPreferences("qb_cache_" + qb_meta.name, Context.MODE_PRIVATE);
                     String json = p.getString(Integer.toString(position), "");
                     if (json.equals(""))
                         Snackbar.make(findViewById(R.id.doExamCoordinatorLayout), "内部出错啦！记得反馈题号题库名称！", Snackbar.LENGTH_LONG).show();
