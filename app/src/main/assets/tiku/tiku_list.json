@@ -37,7 +37,7 @@
     "display_name": "毛概二",
     "tiku_file": "maogai2.json",
     "version": "2023.6.3",
-    "edit_version": 2
+    "edit_version": 3
   },
   {
     "name": "xigai",
@@ -45,6 +45,6 @@
     "display_name": "习概",
     "tiku_file": "xigai.json",
     "version": "2023.6.3",
-    "edit_version": 2
+    "edit_version": 3
   }
 ]

@@ -8,5 +8,6 @@ public class TikuSection {
     public Map<String, String> answer;
     public String key;
     public int answer_type;
+    public String comment;
     public List<String> shuffle;
 }

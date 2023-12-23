@@ -151,7 +151,11 @@ public class QB {
                 }
                 Collections.shuffle(single);
                 Collections.shuffle(multi);
-                single = single.subList(0, 60);
+                if (meta.name.equals("maogai2")) {
+                    single = single.subList(0, 10);
+                } else {
+                    single = single.subList(0, 60);
+                }
                 multi = multi.subList(0, 20);
                 single.addAll(multi);
                 ls = single;
