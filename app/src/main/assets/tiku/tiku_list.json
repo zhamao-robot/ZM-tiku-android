@@ -4,15 +4,15 @@
     "avatar": "@drawable/makesi",
     "display_name": "马克思",
     "tiku_file": "makesi.json",
-    "version": "2023.6.3",
-    "edit_version": 2
+    "version": "2023.12.23",
+    "edit_version": 1
   },
   {
     "name": "politics",
     "avatar": "@drawable/politics",
     "display_name": "思修",
     "tiku_file": "politics.json",
-    "version": "2022.12.10",
+    "version": "2023.12.23",
     "edit_version": 1
   },
   {
@@ -28,7 +28,7 @@
     "avatar": "@drawable/maogai",
     "display_name": "毛概",
     "tiku_file": "maogai.json",
-    "version": "2023.6.3",
+    "version": "2023.12.23",
     "edit_version": 1
   },
   {

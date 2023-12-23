@@ -262,20 +262,6 @@
                 android:text="" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/questionView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="解析：xxxxxx。"
-            android:textColor="@color/primaryTextColor"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/answerLayout6" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/submitButton"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
@@ -289,7 +275,7 @@
             android:text="提交"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/questionView2" />
+            app:layout_constraintTop_toBottomOf="@+id/answerLayout6" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"

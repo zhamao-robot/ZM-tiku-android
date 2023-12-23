@@ -18,8 +18,6 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 import xin.zhamao.zhamao.zm_tiku.R;
-import xin.zhamao.zm_tiku.object.TikuVersion;
-import xin.zhamao.zm_tiku.utils.ZMUtil;
 
 public class AboutMe extends AppCompatActivity implements View.OnClickListener{
 

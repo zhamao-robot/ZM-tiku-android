@@ -40,7 +40,6 @@ import java.util.Map;
 
 import xin.zhamao.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.TikuNotification;
-import xin.zhamao.zm_tiku.object.TikuVersion;
 
 
 public class ZMUtil {

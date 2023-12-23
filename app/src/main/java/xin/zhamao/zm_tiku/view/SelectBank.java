@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,22 +23,16 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
-
-import java.io.File;
 
 import xin.zhamao.zhamao.zm_tiku.BuildConfig;
 import xin.zhamao.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.components.DialogUI;
-import xin.zhamao.zm_tiku.object.TikuVersion;
 import xin.zhamao.zm_tiku.utils.FileSystem;
 import xin.zhamao.zm_tiku.utils.QB;
 import xin.zhamao.zm_tiku.utils.TikuManager;
@@ -87,7 +79,7 @@ public class SelectBank extends AppCompatActivity {
 
         // 如果有题库已经存在，且版本不一致，就弹出询问是否更新
         if (tikuManager.isNeedUpdate() && !getSharedPreferences("settings", 0).getBoolean("no_update_dialog", false)) {
-            dialogUI.showTikuUpdateDialog("以下题库有更新，请根据需求进行更新", dialogUI.makeUpdateListLayout(tikuManager));
+            dialogUI.showTikuUpdateDialog("以下题库有更新，请根据需求进行更新，更新后请重启一次应用", dialogUI.makeUpdateListLayout(tikuManager));
         }
 
         if (!BuildConfig.DEBUG) {
