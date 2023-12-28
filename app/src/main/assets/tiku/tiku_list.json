@@ -5,7 +5,7 @@
     "display_name": "马克思",
     "tiku_file": "makesi.json",
     "version": "2023.12.23",
-    "edit_version": 1
+    "edit_version": 2
   },
   {
     "name": "politics",
@@ -36,15 +36,15 @@
     "avatar": "@drawable/maogai",
     "display_name": "毛概二",
     "tiku_file": "maogai2.json",
-    "version": "2023.6.3",
-    "edit_version": 3
+    "version": "2023.12.28",
+    "edit_version": 1
   },
   {
     "name": "xigai",
     "avatar": "@drawable/xigai",
     "display_name": "习概",
     "tiku_file": "xigai.json",
-    "version": "2023.6.3",
-    "edit_version": 3
+    "version": "2023.12.28",
+    "edit_version": 1
   }
 ]
