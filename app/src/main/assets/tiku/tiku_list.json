@@ -28,7 +28,7 @@
     "avatar": "@drawable/maogai",
     "display_name": "毛概",
     "tiku_file": "maogai.json",
-    "version": "2023.12.23",
+    "version": "2024.6.13",
     "edit_version": 1
   },
   {
@@ -44,7 +44,7 @@
     "avatar": "@drawable/xigai",
     "display_name": "习概",
     "tiku_file": "xigai.json",
-    "version": "2023.12.28",
-    "edit_version": 2
+    "version": "2024.6.13",
+    "edit_version": 1
   }
 ]

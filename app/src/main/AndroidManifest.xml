@@ -17,7 +17,7 @@
         android:resizeableActivity="true"
         tools:targetApi="n">
         <meta-data android:name="android.max_aspect" android:value="2.4" />
-        <activity android:name="xin.zhamao.zm_tiku.view.Feedback" />
+        <activity android:name="xin.zhamao.zm_tiku.view.Feedback" android:exported="true" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.SplashActivity"
             android:exported="true"
@@ -28,21 +28,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="xin.zhamao.zm_tiku.view.TestBank" />
+        <activity android:name="xin.zhamao.zm_tiku.view.TestBank" android:exported="true" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.DoExam"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.SelectMode"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.SelectBank"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.AboutMe"
+            android:exported="true"
             android:screenOrientation="portrait" />
         <activity
             android:name="xin.zhamao.zm_tiku.view.Settings"
+            android:exported="true"
             android:screenOrientation="portrait" />
     </application>
 
