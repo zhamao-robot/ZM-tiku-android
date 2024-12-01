@@ -16,7 +16,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.utils.ZMUtil;
 
 

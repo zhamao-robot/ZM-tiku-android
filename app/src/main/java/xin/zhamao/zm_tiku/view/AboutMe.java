@@ -1,5 +1,6 @@
 package xin.zhamao.zm_tiku.view;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 
 public class AboutMe extends AppCompatActivity implements View.OnClickListener{
 
@@ -101,7 +102,7 @@ public class AboutMe extends AppCompatActivity implements View.OnClickListener{
             });
             menu.add(0, v.getId(), 0, "复制鲸鱼的QQ号").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
-                public boolean onMenuItemClick(MenuItem item) {
+                public boolean onMenuItemClick(@NonNull MenuItem item) {
                     cm.setPrimaryClip(ClipData.newPlainText("Label", "627577391"));
                     Snackbar.make(findViewById(R.id.ConstraintLayout), "成功复制到剪贴板！", Snackbar.LENGTH_SHORT).show();
                     return true;

@@ -17,7 +17,7 @@ import com.google.android.material.textview.MaterialTextView;
 import java.util.Map;
 import java.util.Objects;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.utils.QB;
 import xin.zhamao.zm_tiku.utils.TikuManager;

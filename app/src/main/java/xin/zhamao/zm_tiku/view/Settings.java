@@ -12,7 +12,7 @@ import android.widget.CompoundButton;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.components.DialogUI;
 
 public class Settings extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {

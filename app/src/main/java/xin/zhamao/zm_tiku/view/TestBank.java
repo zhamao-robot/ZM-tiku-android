@@ -12,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.QBSection;
 import xin.zhamao.zm_tiku.utils.QB;
 import xin.zhamao.zm_tiku.utils.ZMUtil;

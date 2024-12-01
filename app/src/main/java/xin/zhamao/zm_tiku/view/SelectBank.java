@@ -30,8 +30,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import xin.zhamao.zhamao.zm_tiku.BuildConfig;
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.BuildConfig;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.components.DialogUI;
 import xin.zhamao.zm_tiku.utils.FileSystem;
 import xin.zhamao.zm_tiku.utils.QB;

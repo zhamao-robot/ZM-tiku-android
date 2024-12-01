@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.TikuNotification;
 
 

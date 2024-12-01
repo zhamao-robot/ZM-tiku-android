@@ -24,7 +24,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.Objects;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.QBSection;
 import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.object.UserInfo;

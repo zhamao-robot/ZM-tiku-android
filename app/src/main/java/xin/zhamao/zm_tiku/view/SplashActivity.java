@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 
 public class SplashActivity extends AppCompatActivity {
 

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.BookmarkData;
 import xin.zhamao.zm_tiku.object.BookmarksSheetAdapter;
 import xin.zhamao.zm_tiku.object.QBSection;

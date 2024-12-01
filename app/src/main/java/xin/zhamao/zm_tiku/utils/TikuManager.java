@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.object.TikuMetaList;
 

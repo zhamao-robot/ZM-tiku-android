@@ -15,15 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.os.BuildCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-import xin.zhamao.zhamao.zm_tiku.BuildConfig;
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.BuildConfig;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.components.ConstraintGridLayout;
 import xin.zhamao.zm_tiku.object.TikuMeta;
 import xin.zhamao.zm_tiku.object.TikuMetaList;
@@ -121,7 +121,8 @@ public class SelectBankFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("选择题库" + (BuildConfig.DEBUG ? " (调试模式)" : ""));
+        boolean debugMode = BuildConfig.DEBUG;
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("选择题库" + (debugMode ? " (调试模式)" : ""));
         View view = inflater.inflate(R.layout.fragment_select_bank, container, false);
         View p = view.findViewById(R.id.selectBankFrameLayout);
         if (p instanceof FrameLayout) {

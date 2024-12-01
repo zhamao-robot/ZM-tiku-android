@@ -46,7 +46,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import xin.zhamao.zhamao.zm_tiku.R;
+import xin.zhamao.zm_tiku.R;
 import xin.zhamao.zm_tiku.object.JudgeResult;
 import xin.zhamao.zm_tiku.object.QBCacheSection;
 import xin.zhamao.zm_tiku.object.QBSection;
