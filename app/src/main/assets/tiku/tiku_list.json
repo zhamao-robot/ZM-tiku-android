@@ -4,8 +4,8 @@
     "avatar": "@drawable/makesi",
     "display_name": "马克思",
     "tiku_file": "makesi.json",
-    "version": "2023.12.23",
-    "edit_version": 2
+    "version": "2025.6.5",
+    "edit_version": 1
   },
   {
     "name": "politics",
@@ -28,13 +28,13 @@
     "avatar": "@drawable/maogai",
     "display_name": "毛概",
     "tiku_file": "maogai.json",
-    "version": "2024.6.17",
+    "version": "2025.6.5",
     "edit_version": 1
   },
   {
     "name": "maogai2",
     "avatar": "@drawable/maogai",
-    "display_name": "毛概二",
+    "display_name": "毛概二（旧版弃用）",
     "tiku_file": "maogai2.json",
     "version": "2023.12.28",
     "edit_version": 2
@@ -44,7 +44,7 @@
     "avatar": "@drawable/xigai",
     "display_name": "习概",
     "tiku_file": "xigai.json",
-    "version": "2024.6.13",
-    "edit_version": 2
+    "version": "2025.6.5",
+    "edit_version": 1
   }
 ]
