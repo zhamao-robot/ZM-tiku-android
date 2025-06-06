@@ -5,14 +5,14 @@
     "display_name": "马克思",
     "tiku_file": "makesi.json",
     "version": "2025.6.5",
-    "edit_version": 1
+    "edit_version": 2
   },
   {
     "name": "politics",
     "avatar": "@drawable/politics",
     "display_name": "思修",
     "tiku_file": "politics.json",
-    "version": "2023.12.23",
+    "version": "2025.6.6",
     "edit_version": 1
   },
   {
@@ -45,6 +45,6 @@
     "display_name": "习概",
     "tiku_file": "xigai.json",
     "version": "2025.6.5",
-    "edit_version": 1
+    "edit_version": 2
   }
 ]
