@@ -13,3 +13,5 @@
 /captures
 .externalNativeBuild
 .cxx
+*.apk
+*.DS_Store

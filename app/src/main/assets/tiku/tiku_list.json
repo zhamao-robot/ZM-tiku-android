@@ -4,8 +4,8 @@
     "avatar": "@drawable/makesi",
     "display_name": "马克思",
     "tiku_file": "makesi.json",
-    "version": "2025.6.5",
-    "edit_version": 2
+    "version": "2025.12.25",
+    "edit_version": 1
   },
   {
     "name": "politics",
@@ -20,7 +20,7 @@
     "avatar": "@drawable/history",
     "display_name": "近代史",
     "tiku_file": "history.json",
-    "version": "2021.12.1",
+    "version": "2025.12.25",
     "edit_version": 1
   },
   {
@@ -44,7 +44,7 @@
     "avatar": "@drawable/xigai",
     "display_name": "习概",
     "tiku_file": "xigai.json",
-    "version": "2025.6.5",
-    "edit_version": 2
+    "version": "2025.12.25",
+    "edit_version": 1
   }
 ]
