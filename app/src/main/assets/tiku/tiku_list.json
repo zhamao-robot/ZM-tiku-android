@@ -20,7 +20,7 @@
     "avatar": "@drawable/history",
     "display_name": "近代史",
     "tiku_file": "history.json",
-    "version": "2025.12.25",
+    "version": "2026.1.6",
     "edit_version": 1
   },
   {
@@ -45,6 +45,6 @@
     "display_name": "习概",
     "tiku_file": "xigai.json",
     "version": "2025.12.25",
-    "edit_version": 2
+    "edit_version": 3
   }
 ]
